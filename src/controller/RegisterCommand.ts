@@ -1,8 +1,8 @@
 import { INotification, SimpleCommand } from "@puremvc/puremvc-typescript-multicore-framework";
 import { UserListMediator } from "../view/UserListMediator";
 import { UserFormMediator } from "../view/UserFormMediator";
-import { ApplicationConstants } from "../ApplicationConstants";
 import { UserRoleMediator } from "../view/UserRoleMediator";
+import { ApplicationConstants } from "../ApplicationConstants";
 
 export class RegisterCommand extends SimpleCommand {
 

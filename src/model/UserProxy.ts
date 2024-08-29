@@ -37,7 +37,9 @@ export class UserProxy extends Proxy {
     const response = await fetch(Platform.OS === "android" ? "http://10.0.2.2/departments" : "http://127.0.0.1/departments", {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
-      return json.map((department: IDepartment) => Department.fromJson(department));
+      const departments = json.map((department: IDepartment) => Department.fromJson(department));
+      departments.unshift(Department.NONE_SELECTED);
+      return departments;
     } else {
       const error = await response.json();
       throw new Error(error.message);

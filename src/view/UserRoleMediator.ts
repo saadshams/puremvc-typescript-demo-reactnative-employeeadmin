@@ -5,7 +5,7 @@ import { RoleProxy } from "../model/RoleProxy";
 
 export class UserRoleMediator extends Mediator {
 
-  public static get NAME() { return "UserRoleMediator" }
+  public static NAME = "UserRoleMediator";
 
   private roleProxy: RoleProxy | undefined;
 
