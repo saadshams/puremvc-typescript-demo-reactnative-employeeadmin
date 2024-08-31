@@ -2,18 +2,17 @@ import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { ApplicationConstants } from "../../ApplicationConstants";
-import { RootStackParamList } from "../../Application";
-import { User } from "../../model/valueObject/User";
+import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
+import User from "../../model/valueObject/User";
 
 interface Props {
-  navigation: StackNavigationProp<RootStackParamList, "UserList">;
+  navigation: StackNavigationProp<ParamList, "UserList">;
 }
 
 const UserList: React.FC<Props> = ({ navigation }) => {
 
   const [users, setUsers] = useState([]);
-
+  const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
   const ref = useRef({});
 
   useImperativeHandle(ref, () => ({
@@ -23,20 +22,23 @@ const UserList: React.FC<Props> = ({ navigation }) => {
   }));
 
   useEffect(() => {
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    emitter.emit(ApplicationConstants.MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.MOUNT, ref.current);
 
     return () => { // initialRoute remains mounted
       // emitter.emit(ApplicationConstants.UNMOUNTED, {name: ApplicationConstants.USER_LIST});
     };
   }, [ref]);
 
+  const onPress = (user: User) => {
+    navigation.navigate("UserForm", { user: user });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <FlatList data={users} keyExtractor={(item: User) => `user_${item.id}`} renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate("UserForm", { id: item.id })}>
-              <Text style={styles.item}>{item.last}, {item.first}</Text>
+        <FlatList data={users} keyExtractor={(user: User) => `user_${user.id}`} renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => onPress(item)}>
+              <Text style={styles.user}>{item.last}, {item.first}</Text>
             </TouchableOpacity>
           )}
         />
@@ -49,9 +51,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  item: {
+  user: {
     padding: 16,
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "bold",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },

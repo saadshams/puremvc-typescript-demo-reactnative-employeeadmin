@@ -1,9 +1,9 @@
 import { Proxy } from "@puremvc/puremvc-typescript-multicore-framework";
-import { User, IUser } from "./valueObject/User";
-import { Department, IDepartment } from "./valueObject/Department";
-import { Platform } from "react-native";
+import User from "./valueObject/User";
+import Department from "./valueObject/Department";
+import { ApplicationConstants } from "../ApplicationConstants";
 
-export class UserProxy extends Proxy {
+export default class UserProxy extends Proxy {
 
   public static NAME = "UserProxy";
 
@@ -12,10 +12,10 @@ export class UserProxy extends Proxy {
   }
 
   public async findAllUsers(): Promise<User[]> {
-    const response = await fetch(Platform.OS === "android" ? "http://10.0.2.2/users" : "http://127.0.0.1/users", {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/users`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
-      return json.map((user: IUser) => User.fromJson(user));
+      return json.map((user: User) => new User(user.id, "", user.first, user.last));
     } else {
       const error = await response.json();
       throw new Error(error.message);
@@ -23,10 +23,10 @@ export class UserProxy extends Proxy {
   }
 
   public async findUserById(id: number): Promise<User> {
-    const response = await fetch(Platform.OS === "android" ? `http://10.0.2.2/users/${id}` : `http://127.0.0.1/users/${id}`, {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/users/${id}`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
-      return json.map((user: IUser) => User.fromJson(user));
+      return User.fromJson(json);
     } else {
       const error = await response.json();
       throw new Error(error.message);
@@ -34,10 +34,10 @@ export class UserProxy extends Proxy {
   }
 
   public async findAllDepartments(): Promise<Department[]> {
-    const response = await fetch(Platform.OS === "android" ? "http://10.0.2.2/departments" : "http://127.0.0.1/departments", {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/departments`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
-      const departments = json.map((department: IDepartment) => Department.fromJson(department));
+      const departments = json.map((department: Department) => Department.fromJson(department));
       departments.unshift(Department.NONE_SELECTED);
       return departments;
     } else {

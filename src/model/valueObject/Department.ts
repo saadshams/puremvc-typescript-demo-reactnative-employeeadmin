@@ -1,9 +1,4 @@
-export interface IDepartment {
-  id: number,
-  name: string
-}
-
-export class Department {
+export default class Department {
 
   static NONE_SELECTED = new Department(0, "---None Selected---");
 
@@ -15,7 +10,7 @@ export class Department {
     this.name = name;
   }
 
-  static fromJson({id, name}: IDepartment) {
+  static fromJson({id, name}: Department) {
     return new Department(id, name);
   }
 

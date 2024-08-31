@@ -1,38 +1,47 @@
-import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
+import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
+import RoleProxy from "../model/RoleProxy";
 import { ApplicationConstants } from "../ApplicationConstants";
-import { RoleProxy } from "../model/RoleProxy";
 
 export class UserRoleMediator extends Mediator {
 
   public static NAME = "UserRoleMediator";
 
+  private emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
+  private listeners: EmitterSubscription[] = [];
   private roleProxy: RoleProxy | undefined;
-
-  private listener: EmitterSubscription | undefined;
 
   constructor(component: any) {
     super(UserRoleMediator.NAME, component);
   }
 
-  onRegister() {
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    this.listener = emitter.addListener(ApplicationConstants.UNMOUNTED, this.handlers.onUnmounted)
+  public async onRegister() {
+    this.listeners.push(this.emitter.addListener(ApplicationConstants.UNMOUNT, event => this.onUnmount(event)));
+    this.listeners.push(this.emitter.addListener(ApplicationConstants.USER_SELECTED, event => this.onSelect(event)));
 
     this.roleProxy = this.facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
-    this.roleProxy.findAllRoles()
-      .then(roles => this.viewComponent.setRoles(roles))
-      .catch(console.log);
+    try {
+      this.component.setRoles(await this.roleProxy?.findAllRoles());
+    } catch(error) {
+      console.log(error);
+    }
   }
 
-  private handlers = {
-    onUnmounted: (event: any) => this.onUnmounted(event)
+  public onRemove() {
+    this.listeners.forEach(listener => listener.remove());
   }
 
-  private onUnmounted(event: any) {
-    if (event.name === ApplicationConstants.USER_LIST) {
+  private onUnmount(event: any) {
+    if (event.name === ApplicationConstants.USER_ROLE) {
       this.facade.removeMediator(UserRoleMediator.NAME);
-      this.listener?.remove();
+    }
+  }
+
+  private async onSelect(event: any) {
+    try {
+      this.component.setData(await this.roleProxy?.findRolesById(event.id));
+    } catch(error) {
+      console.log(error);
     }
   }
 

@@ -1,38 +1,47 @@
-import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import { UserProxy } from "../model/UserProxy";
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
+import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
+import UserProxy from "../model/UserProxy";
 import { ApplicationConstants } from "../ApplicationConstants";
 
 export class UserFormMediator extends Mediator {
 
   public static NAME = "UserFormMediator";
 
-  private listener: EmitterSubscription | undefined;
-
-  private userProxy: UserProxy | null | undefined;
+  private emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
+  private listeners: EmitterSubscription[] = [];
+  private userProxy: UserProxy | undefined;
 
   constructor(component: any) {
     super(UserFormMediator.NAME, component);
   }
 
-  public onRegister() {
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    this.listener = emitter.addListener(ApplicationConstants.UNMOUNTED, this.handlers.onUnmounted);
+  public async onRegister() {
+    this.listeners.push(this.emitter.addListener(ApplicationConstants.UNMOUNT, event => this.onUnmount(event)));
+    this.listeners.push(this.emitter.addListener(ApplicationConstants.USER_SELECTED, event => this.onSelect(event)));
 
     this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
-    this.userProxy.findAllDepartments()
-      .then(departments => this.component.setDepartments(departments))
-      .catch(console.log);
+    try {
+      this.component.setDepartments(await this.userProxy?.findAllDepartments())
+    } catch(error) {
+      console.log(error);
+    }
   }
 
-  private handlers = {
-    onUnmounted: (event: any) => this.onUnmounted(event)
+  public onRemove() {
+    this.listeners.forEach(listener => listener.remove());
   }
 
-  private onUnmounted(event: any) {
+  private onUnmount(event: any) {
     if (event.name === ApplicationConstants.USER_FORM) {
       this.facade.removeMediator(UserFormMediator.NAME);
-      this.listener?.remove();
+    }
+  }
+
+  private async onSelect(event: any) {
+    try {
+      this.component.setUser(await this.userProxy?.findUserById(event.id));
+    } catch (error) {
+      console.log(error);
     }
   }
 

@@ -1,4 +1,4 @@
-## [PureMVC](http://puremvc.github.com/) [TypeScript](https://github.com/PureMVC/puremvc-typescript-multicore-framework/wiki) [ReactNative](https://en.wikipedia.org/wiki/React_Native) Demo - Employee Admin [![Playwright Tests](https://github.com/PureMVC/puremvc-typescript-demo-employeeadmin/actions/workflows/playwright.yml/badge.svg)](https://github.com/PureMVC/puremvc-js-demo-employeeadmin/actions/workflows/playwright.yml)
+## [PureMVC](https://puremvc.org) [TypeScript](https://github.com/PureMVC/puremvc-typescript-multicore-framework/wiki) [ReactNative](https://en.wikipedia.org/wiki/React_Native) Demo - Employee Admin
 This demo illustrates techniques for performing routine client-side maintenance operations in a PureMVC-based application.
 
 ## Installation
@@ -14,53 +14,6 @@ cd puremvc-typescript-demo-reactnative-employeeadmin
 npm start
 ```
 
-## Environment
-
-** Install OpenJDK Zulu 17**
-
-**Android Studio:**
-Install Android SDK command line tools
-Install CMake (in android studio)
-Ndk version (match with android project)
-from Android Studio, Android SDK (Show Package Details)
-
-**XCode:**
-Preferences -> Locations -> Command Line Tools
-Select Xcode 14.2 (14C18) from the drop down, enter password
-
-`sudo gem install cocoapods`
-
-## Project
-`npx react-native init EmployeeAdmin`
-
-**iOS Setup**
-```shell
-cd ios
-pod install
-```
-Open workspace file (EmployeeAdmin/ios/EmployeeAdmin.xcworkspace)
-Wait for Xcode to index the files.
-Go to Product > Clean Build Folder.
-Then, click Product > Build. (launches terminal and runs metro server)
-Alternatively, you can use the command `"xed -b ios"`
-Hit the Run button
-
-**Android Setup**
-
-Open the project in Android Studio from the android folder.
-Wait for Gradle to sync and finish.
-
-CLI Commands
-```shell
-npx react-native start  
-npx react-native start --port 9988
-
-npx react-native run-ios
-npx react-native run-ios --simulator="iPhone 14 Pro"
-
-npx react-native run-android
-```
-
 ## Screenshot
 ![PureMVC ReactNative Demo: Employee Admin]()
 
@@ -73,12 +26,56 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 * [JavaScript](http://en.wikipedia.org/wiki/JavaScript)
 * [ECMA](https://en.wikipedia.org/wiki/ECMAScript)
 
-## For XCode 14.2 (MacPro Late 2013)
-    npx react-native@0.71 init EmployeeAdmin --version 0.71
-`pod install` will give error because
-**react-native v0.71** toolset expects **Ruby version 2.7.6**
-[Link](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
+## Environment Setup
 
+**Java** 
+* Install OpenJDK Zulu 17
+
+**Android Studio:**
+* Install Android Studio
+* Install Android SDK Command Line Tools
+* Install CMake
+
+**XCode:**
+* Install XCode
+* Go to Xcode Preferences > Locations and select Command Line Tools.
+
+**Cocoapods**
+* Install Cocoapods `sudo gem install cocoapods`
+
+## Project Setup
+`npx react-native init EmployeeAdmin`
+
+**iOS Setup**
+```shell
+cd ios
+pod install
+```
+* Open Workspace in XCode or run `"xed -b ios"` and wait for file indexing
+* Select Product > Clean Build Folder
+* Optionally, Select Product > Build to launch the terminal and start the Metro server.
+
+**Android Setup**
+* Open the project in Android Studio and wait for Gradle to sync and finish
+* Ensure the `ndkVersion` in **build.gradle** matches the installed NDK version
+
+## Project Launch
+CLI Commands
+```shell
+npx react-native start  
+npx react-native start --port 9988
+
+npx react-native run-ios
+npx react-native run-ios --simulator="iPhone 14 Pro"
+
+npx react-native run-android
+```
+
+## Older Versions: XCode 14.2 (MacPro Late 2013)
+`npx react-native@0.71 init EmployeeAdmin --version 0.71`
+
+Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
+[Link](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
 ```shell
 brew install rbenv
 rbenv install 2.7.6
@@ -88,10 +85,20 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 ```
 
-before: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.x86_64-darwin21]
-after: ruby 2.7.6p219 (2022-04-12 revision c9c2245c0a) [x86_64-darwin21]
+## UI Libraries
+* [React Native Elements](https://reactnativeelements.com)
+* [React Native Paper](https://reactnativepaper.com)
+* [Tamagui](https://tamagui.dev)
+* [Nativebase](https://nativebase.io)
+* [NativeWind](https://www.nativewind.dev)
+* [UI Kitten](https://akveo.github.io/react-native-ui-kitten)
+* [RNUI](https://wix.github.io/react-native-ui-lib)
+* [Gluestack-ui](https://ui.gluestack.io)
+* [Restyle](https://github.com/Shopify/restyle)
 
-
+## Examples
+[F8app](https://github.com/fbsamples/f8app)
+[Sample Apps](https://github.com/SamuelOkoroShow)
 
 ## License
 * PureMVC TypeScript React Native Demo - Employee Admin - Copyright © 2024 [Saad Shams](https://www.linkedin.com/in/muizz)

@@ -1,6 +1,6 @@
 import {SimpleCommand, INotification} from "@puremvc/puremvc-typescript-multicore-framework";
-import {UserProxy} from "../model/UserProxy";
-import {RoleProxy} from "../model/RoleProxy";
+import UserProxy from "../model/UserProxy";
+import RoleProxy from "../model/RoleProxy";
 
 export class StartupCommand extends SimpleCommand {
 

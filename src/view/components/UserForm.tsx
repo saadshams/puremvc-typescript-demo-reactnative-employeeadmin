@@ -1,24 +1,23 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { NativeEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
-
-import { RootStackParamList } from "../../Application";
-import { ApplicationConstants } from "../../ApplicationConstants";
-import { User } from "../../model/valueObject/User";
-import { Department } from "../../model/valueObject/Department";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
 
+import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
+import User from "../../model/valueObject/User";
+import Department from "../../model/valueObject/Department";
+
 interface Props {
-  route: RouteProp<RootStackParamList, "UserForm">;
+  navigation: StackNavigationProp<ParamList, "UserForm">;
+  route: RouteProp<ParamList, "UserForm">;
 }
 
-const UserForm: React.FC<Props> = ({ route }) => {
+const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
-  const { id } = route.params;
-
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>(new User());
   const [departments, setDepartments] = useState<Department[]>([]);
-
+  const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
   const ref = useRef({});
 
   useImperativeHandle(ref, () => ({
@@ -28,17 +27,44 @@ const UserForm: React.FC<Props> = ({ route }) => {
     setDepartments: setDepartments
   }));
 
-  useEffect(() => {
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    emitter.emit(ApplicationConstants.MOUNTED, ref.current);
-
+  useEffect(() => { // mount
+    emitter.emit(ApplicationConstants.MOUNT, ref.current);
     return () => {
-      emitter.emit(ApplicationConstants.UNMOUNTED, {name: ApplicationConstants.USER_FORM});
+      emitter.emit(ApplicationConstants.UNMOUNT, {name: ApplicationConstants.USER_FORM});
     }
   }, [ref]);
 
-  const onChange = (field: keyof User, value: string) => {
-    console.log(`${field}: ${value}`);
+  useEffect(() => { // id passed
+    emitter.emit(ApplicationConstants.USER_SELECTED, { id: route.params?.user.id });
+    return () => {}
+  }, [route.params?.user]);
+
+  useEffect(() => { // Roles passed from UserRole
+    console.log(route.params?.user.roles);
+  }, [route.params?.user]);
+
+  const onChange = (field: keyof User, value: string) => { // text fields
+    setUser((state: User) => (
+      { ...state, [field]: value } as User
+    ));
+  }
+
+  const onValueChange = (value: number, index: number) => { // department
+    setUser((state: User) => (
+      { ...state, department: departments.find(d => d.id === value)} as User
+    ));
+  }
+
+  const onRoles = (event: any) => {
+    navigation.navigate("UserRole", { user: user });
+  }
+
+  const onSave = (event: any) => {
+    navigation.pop();
+  }
+
+  const onCancel = (event: any) => {
+    navigation.goBack();
   }
 
   return (
@@ -48,29 +74,35 @@ const UserForm: React.FC<Props> = ({ route }) => {
         <TextInput style={styles.input} placeholder="Last Name" value={user?.last} onChangeText={(value) => onChange("last", value)} />
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("email", value)} keyboardType="email-address" />
+        <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("last", value)} keyboardType="email-address" />
         <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} />
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={(value) => onChange("password", value)} />
-        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => onChange("confirm", value)} />
-      </View>
-      <View>
-        <Picker>
-          {departments.map((department) => (
-            <Picker.Item key={department.key} label={department.name} value={department.id} style={styles.input} />
-          ))}
-        </Picker>
+        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={(value) => setUser( ({...user, password: value } as User) )} />
+        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => setUser( ({...user, confirm: value } as User) )} />
       </View>
       <View style={styles.row}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Roles</Text>
+        <Picker style={styles.input} selectedValue={user.department.id} onValueChange={onValueChange}>
+          {departments?.map((department) => (
+            <Picker.Item key={department.key} label={department.name} value={department.id} />
+          ))}
+        </Picker>
+        <TouchableOpacity style={[styles.button, styles.roles]} onPress={onRoles}>
+          <Text style={styles.buttonText}>ROLES</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.row}>
+        <TouchableOpacity style={[styles.button, styles.cancel]} onPress={onSave}>
+          <Text style={styles.buttonText}>CANCEL</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.save]} onPress={onCancel}>
+          <Text style={styles.buttonText}>UPDATE</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
-// onPress={() => navigation.navigate("UserRole", {id: user.id}) }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -78,7 +110,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   input: {
@@ -87,19 +119,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
-    padding: 8,
-    marginHorizontal: 4,
+    marginHorizontal: 5,
   },
   button: {
     flex: 1,
-    backgroundColor: "#CCCCCC",
-    paddingVertical: 15,
-    paddingHorizontal: 15,
     borderRadius: 5,
+    marginHorizontal: 5,
+    paddingVertical: 8,
   },
   buttonText: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 18,
+    textAlign: "center"
+  },
+  cancel: {
+    backgroundColor: "#D32F2F",
+  },
+  save: {
+    backgroundColor: "#4CAF50",
+  },
+  update: {
+    backgroundColor: "#2196F3",
+  },
+  roles: {
+    backgroundColor: "#9C27B0",
   },
 });
 

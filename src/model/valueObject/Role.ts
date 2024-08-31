@@ -1,9 +1,4 @@
-export interface IRole {
-  id: number,
-  name: string
-}
-
-export class Role {
+export default class Role {
 
   static NONE_SELECTED = new Role(0, "--None Selected---");
 
@@ -15,7 +10,7 @@ export class Role {
     this.name = name;
   }
 
-  static fromJson({id, name}: IRole) {
+  static fromJson({id, name}: Role) {
     return new Role(id, name);
   }
 
