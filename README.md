@@ -72,7 +72,9 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 ## Project
 * Init Project: `npx react-native init EmployeeAdmin`
-* Build Android: `cd android && ./gradlew clean` | `cd android && .\gradlew clean`
+* Build Android: 
+  * Mac: `cd android && ./gradlew clean`
+  * Windows: `cd android && .\gradlew clean`
 * Build iOS: `cd ios && pod install`
   * Or open Workspace or run `"xed -b ios"` | Product -> Clean Build Folder | Product -> Build to Start Server
 * Start Server: `npx react-native start` | `npx react-native start --port 9988`
