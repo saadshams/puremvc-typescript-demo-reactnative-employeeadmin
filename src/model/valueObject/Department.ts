@@ -1,4 +1,4 @@
-export default class Department {
+export class Department {
 
   static NONE_SELECTED = new Department(0, "---None Selected---");
 

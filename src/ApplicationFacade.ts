@@ -1,10 +1,8 @@
 import { Facade } from "@puremvc/puremvc-typescript-multicore-framework";
 import { StartupCommand } from "./controller/StartupCommand";
 import { RegisterCommand } from "./controller/RegisterCommand";
-import { ApplicationConstants } from "./ApplicationConstants";
-import { NativeEventEmitter, NativeModules } from "react-native";
 
-export default class ApplicationFacade extends Facade {
+export class ApplicationFacade extends Facade {
 
   public static KEY: string = "employeeAdmin";
   public static STARTUP: string = "startup";
@@ -20,17 +18,11 @@ export default class ApplicationFacade extends Facade {
     this.registerCommand(ApplicationFacade.REGISTER, () => new RegisterCommand());
   }
 
-  public static getInstance(key: string): ApplicationFacade {
-    return Facade.getInstance(key, k => new ApplicationFacade(k)) as ApplicationFacade;
+  public static getInstance(key: string, factory: (k: string) => ApplicationFacade): ApplicationFacade {
+    return Facade.getInstance(key, factory) as ApplicationFacade;
   }
 
   public startup() {
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    emitter.addListener(ApplicationConstants.MOUNT, (event) => this.register(event) );
     this.sendNotification(ApplicationFacade.STARTUP);
-  }
-
-  public register(component: any) {
-    this.sendNotification(ApplicationFacade.REGISTER, component);
   }
 }

@@ -58,6 +58,11 @@ pod install
 **Android Setup**
 * Open the project in Android Studio and wait for Gradle to sync and finish
 * Ensure the `ndkVersion` in **build.gradle** matches the installed NDK version
+* Clean and Rebuild the Project
+```shell
+cd android
+./gradlew clean
+```
 
 ## Project Launch
 CLI Commands
@@ -84,6 +89,10 @@ rbenv rehash
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 ```
+
+## Troubleshooting
+* Rebuild Android: `cd android && ./gradlew clean && cd ..`
+* Clear Cache: `npx react-native start --reset-cache`
 
 ## UI Libraries
 * [React Native Elements](https://reactnativeelements.com)

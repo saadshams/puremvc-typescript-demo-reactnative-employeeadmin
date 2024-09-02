@@ -1,7 +1,8 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import UserProxy from "../model/UserProxy";
-import { ApplicationConstants } from "../ApplicationConstants";
+import { UserProxy } from "../model/UserProxy";
+import { USER_LIST_UNMOUNTED } from "../ApplicationConstants";
+import { IUserList } from "./components/UserList";
 
 export class UserListMediator extends Mediator {
 
@@ -9,15 +10,14 @@ export class UserListMediator extends Mediator {
 
   private emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
   private listeners: EmitterSubscription[] = [];
-  private userProxy: UserProxy | undefined;
+  private userProxy!: UserProxy;
 
   constructor(component: any) {
     super(UserListMediator.NAME, component);
+    this.listeners.push(this.emitter.addListener(USER_LIST_UNMOUNTED, event => this.onUnmounted(event)));
   }
 
   public async onRegister() {
-    this.listeners.push(this.emitter.addListener(ApplicationConstants.UNMOUNT, event => this.onUnmounted(event)));
-
     this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
     try {
       this.component.setUsers(await this.userProxy?.findAllUsers());
@@ -31,11 +31,11 @@ export class UserListMediator extends Mediator {
   }
 
   private onUnmounted(event: any) {
-    if (event.name === ApplicationConstants.USER_LIST) {
-      this.facade.removeMediator(UserListMediator.NAME);
-    }
+    event === USER_LIST_UNMOUNTED && this.facade.removeMediator(UserListMediator.NAME);
   }
 
-  public get component() { return this.viewComponent }
+  public get component(): IUserList {
+    return this.viewComponent
+  }
 
 }

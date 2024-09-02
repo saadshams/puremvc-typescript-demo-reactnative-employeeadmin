@@ -4,13 +4,23 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
 
-import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import User from "../../model/valueObject/User";
-import Department from "../../model/valueObject/Department";
+import { USER_FORM_MOUNTED, USER_FORM_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import { User } from "../../model/valueObject/User";
+import { Department } from "../../model/valueObject/Department";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
   route: RouteProp<ParamList, "UserForm">;
+}
+
+export interface IUserForm {
+  USER_FETCH: string,
+  USER_SAVE: string,
+  USER_UPDATE: string,
+
+  setUser: (user: User) => void,
+  setDepartments: (departments: Department[]) => void,
+  goBack: (u: User) => void
 }
 
 const UserForm: React.FC<Props> = ( {navigation, route} ) => {
@@ -18,51 +28,68 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
   const [user, setUser] = useState<User>(new User());
   const [departments, setDepartments] = useState<Department[]>([]);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef({});
+  const ref = useRef<IUserForm>(null!);
 
   useImperativeHandle(ref, () => ({
-    NAME: ApplicationConstants.USER_FORM,
+    USER_FETCH: "UserFormFetch",
+    USER_SAVE: "UserFormSave",
+    USER_UPDATE: "UserFormUpdate",
 
     setUser: setUser,
-    setDepartments: setDepartments
+    setDepartments: setDepartments,
+    goBack: (u: User) => {
+      navigation.navigate("UserList", { user: u })
+    }
   }));
 
   useEffect(() => { // mount
-    emitter.emit(ApplicationConstants.MOUNT, ref.current);
+    emitter.emit(USER_FORM_MOUNTED, ref.current);
+    if (route.params?.user.id) { // fetch user - if id is passed from UserList
+      console.log("fetching user");
+      emitter.emit(ref.current.USER_FETCH, { id: route.params?.user.id });
+    }
     return () => {
-      emitter.emit(ApplicationConstants.UNMOUNT, {name: ApplicationConstants.USER_FORM});
+      emitter.emit(USER_FORM_UNMOUNTED);
     }
   }, [ref]);
 
-  useEffect(() => { // id passed
-    emitter.emit(ApplicationConstants.USER_SELECTED, { id: route.params?.user.id });
+  // set roles if roles are passed from User Role
+  useEffect(() => {
+    if (route.params?.user.roles) { // (race condition)
+      console.log("received & updating roles", route.params?.user.roles);
+      setUser((state: User) => (
+        {...state, roles: route.params?.user.roles}
+      ));
+    }
     return () => {}
-  }, [route.params?.user]);
+  }, [route.params]);
 
-  useEffect(() => { // Roles passed from UserRole
-    console.log(route.params?.user.roles);
-  }, [route.params?.user]);
-
-  const onChange = (field: keyof User, value: string) => { // text fields
+  // text fields change handler
+  const onChange = (field: keyof User, value: string) => {
     setUser((state: User) => (
       { ...state, [field]: value } as User
     ));
   }
 
-  const onValueChange = (value: number, index: number) => { // department
+  // department value change handler
+  const onValueChange = (value: number, index: number) => {
     setUser((state: User) => (
       { ...state, department: departments.find(d => d.id === value)} as User
     ));
   }
 
+  // roles press handler
   const onRoles = (event: any) => {
     navigation.navigate("UserRole", { user: user });
   }
 
+  // save press handler
   const onSave = (event: any) => {
-    navigation.pop();
+    console.log("on press save or update", user.roles);
+    emitter.emit(user.id === 0 ? ref.current.USER_SAVE : ref.current.USER_UPDATE, {user: user});
   }
 
+  // cancel press handler
   const onCancel = (event: any) => {
     navigation.goBack();
   }
@@ -74,7 +101,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
         <TextInput style={styles.input} placeholder="Last Name" value={user?.last} onChangeText={(value) => onChange("last", value)} />
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("last", value)} keyboardType="email-address" />
+        <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("email", value)} keyboardType="email-address" />
         <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} />
       </View>
       <View style={styles.row}>
@@ -92,11 +119,11 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
-        <TouchableOpacity style={[styles.button, styles.cancel]} onPress={onSave}>
+        <TouchableOpacity style={[styles.button, styles.cancel]} onPress={onCancel}>
           <Text style={styles.buttonText}>CANCEL</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.save]} onPress={onCancel}>
-          <Text style={styles.buttonText}>UPDATE</Text>
+        <TouchableOpacity style={[styles.button, styles.save]} onPress={onSave}>
+          <Text style={styles.buttonText}>{route.params?.user.id ? "UPDATE" : "SAVE"}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

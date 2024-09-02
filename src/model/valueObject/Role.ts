@@ -1,6 +1,4 @@
-export default class Role {
-
-  static NONE_SELECTED = new Role(0, "--None Selected---");
+export class Role {
 
   public readonly id: number;
   public readonly name: string;

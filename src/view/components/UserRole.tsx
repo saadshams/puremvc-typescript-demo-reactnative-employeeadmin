@@ -4,12 +4,19 @@ import { RouteProp } from "@react-navigation/native";
 import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import Role from "../../model/valueObject/Role";
+import { USER_ROLE_MOUNTED, USER_ROLE_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import { Role } from "../../model/valueObject/Role";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;
   route: RouteProp<ParamList, "UserRole">;
+}
+
+export interface IUserRole {
+  USER_ROLE_FETCH: string;
+
+  setRoles: (roles: Role[]) => void;
+  setData: (data: Role[]) => void;
 }
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
@@ -17,22 +24,22 @@ const UserRole: React.FC<Props> = ({ navigation, route }) => {
   const [roles, setRoles] = useState<Role[]>();
   const [data, setData] = useState<Role[]>([]);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef({});
+  const ref = useRef<IUserRole>(null!);
 
   useImperativeHandle(ref, () => ({
-    NAME: ApplicationConstants.USER_ROLE,
+    USER_ROLE_FETCH: "UserRoleFetch",
 
     setRoles: setRoles,
     setData: setData
   }));
 
   useEffect(() => {
-    emitter.emit(ApplicationConstants.MOUNT, ref.current);
+    emitter.emit(USER_ROLE_MOUNTED, ref.current);
     if (route.params?.user.id)
-      emitter.emit(ApplicationConstants.USER_SELECTED, {id: route.params?.user.id});
+      emitter.emit(ref.current.USER_ROLE_FETCH, {id: route.params?.user.id});
 
     return () => {
-      emitter.emit(ApplicationConstants.UNMOUNT, {name: ApplicationConstants.USER_ROLE});
+      emitter.emit(USER_ROLE_UNMOUNTED);
     }
   }, [ref]);
 

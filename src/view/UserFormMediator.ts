@@ -1,7 +1,8 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import UserProxy from "../model/UserProxy";
-import { ApplicationConstants } from "../ApplicationConstants";
+import { UserProxy } from "../model/UserProxy";
+import { USER_FORM_UNMOUNTED } from "../ApplicationConstants";
+import { IUserForm } from "./components/UserForm";
 
 export class UserFormMediator extends Mediator {
 
@@ -9,15 +10,17 @@ export class UserFormMediator extends Mediator {
 
   private emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
   private listeners: EmitterSubscription[] = [];
-  private userProxy: UserProxy | undefined;
+  private userProxy!: UserProxy;
 
   constructor(component: any) {
     super(UserFormMediator.NAME, component);
+    this.listeners.push(this.emitter.addListener(USER_FORM_UNMOUNTED, event => this.onUnmount(event)));
   }
 
   public async onRegister() {
-    this.listeners.push(this.emitter.addListener(ApplicationConstants.UNMOUNT, event => this.onUnmount(event)));
-    this.listeners.push(this.emitter.addListener(ApplicationConstants.USER_SELECTED, event => this.onSelect(event)));
+    this.listeners.push(this.emitter.addListener(this.component.USER_FETCH, event => this.onFetch(event)));
+    this.listeners.push(this.emitter.addListener(this.component.USER_SAVE, event => this.onSave(event)));
+    this.listeners.push(this.emitter.addListener(this.component.USER_UPDATE, event => this.onUpdate(event)));
 
     this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
     try {
@@ -32,19 +35,36 @@ export class UserFormMediator extends Mediator {
   }
 
   private onUnmount(event: any) {
-    if (event.name === ApplicationConstants.USER_FORM) {
-      this.facade.removeMediator(UserFormMediator.NAME);
-    }
+    event === USER_FORM_UNMOUNTED && this.facade.removeMediator(UserFormMediator.NAME);
   }
 
-  private async onSelect(event: any) {
+  private async onFetch(event: any) {
     try {
-      this.component.setUser(await this.userProxy?.findUserById(event.id));
+      this.component.setUser(await this.userProxy.findUserById(event.id));
+      console.log("user set");
     } catch (error) {
       console.log(error);
     }
   }
 
-  public get component() { return this.viewComponent }
+  private async onSave(event: any) {
+    try {
+      this.component.goBack(await this.userProxy.save(event.user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private async onUpdate(event: any) {
+    try {
+      this.component.goBack(await this.userProxy!.update(event.user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public get component() : IUserForm {
+    return this.viewComponent
+  }
 
 }

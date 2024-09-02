@@ -1,7 +1,7 @@
-import Department from "./Department";
-import Role from "./Role";
+import { Department } from "./Department";
+import { Role } from "./Role";
 
-export default class User {
+export class User {
   public readonly id: number;
   public username: string;
   public first: string;

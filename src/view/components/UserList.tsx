@@ -1,33 +1,51 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
 
-import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import User from "../../model/valueObject/User";
+import { USER_LIST_MOUNTED, USER_LIST_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import { User } from "../../model/valueObject/User";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;
+  route: RouteProp<ParamList, "UserList">;
 }
 
-const UserList: React.FC<Props> = ({ navigation }) => {
+export interface IUserList {
+  DELETE: string,
 
-  const [users, setUsers] = useState([]);
+  setUsers: (users: User[]) => void
+}
+
+const UserList: React.FC<Props> = ({ navigation, route }) => {
+
+  const [users, setUsers] = useState<User[]>([]);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef({});
+  const ref = useRef<IUserList>(null!);
 
   useImperativeHandle(ref, () => ({
-    NAME: ApplicationConstants.USER_LIST,
+    DELETE: "UserListDelete",
 
     setUsers: setUsers,
   }));
 
   useEffect(() => {
-    emitter.emit(ApplicationConstants.MOUNT, ref.current);
-
-    return () => { // initialRoute remains mounted
-      // emitter.emit(ApplicationConstants.UNMOUNTED, {name: ApplicationConstants.USER_LIST});
+    emitter.emit(USER_LIST_MOUNTED, ref.current);
+    return () => {
+      emitter.emit(USER_LIST_UNMOUNTED);
     };
   }, [ref]);
+
+  useEffect(() => {
+    if (route.params?.user.roles) { // updated user from the User Form
+        setUsers((users: User[]) => {
+          if (users.some(user => user.id === route.params?.user.id))  // existing, update
+            return users.map((user: User) => user.id === route.params?.user.id ? route.params?.user : user)
+          else
+            return [...users, route.params?.user] // add new
+        });
+    }
+  }, [route.params?.user]);
 
   const onPress = (user: User) => {
     navigation.navigate("UserForm", { user: user });

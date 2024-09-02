@@ -1,7 +1,8 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import RoleProxy from "../model/RoleProxy";
-import { ApplicationConstants } from "../ApplicationConstants";
+import { USER_ROLE_UNMOUNTED } from "../ApplicationConstants";
+import { RoleProxy } from "../model/RoleProxy";
+import { IUserRole } from "./components/UserRole";
 
 export class UserRoleMediator extends Mediator {
 
@@ -9,15 +10,15 @@ export class UserRoleMediator extends Mediator {
 
   private emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
   private listeners: EmitterSubscription[] = [];
-  private roleProxy: RoleProxy | undefined;
+  private roleProxy!: RoleProxy;
 
   constructor(component: any) {
     super(UserRoleMediator.NAME, component);
+    this.listeners.push(this.emitter.addListener(USER_ROLE_UNMOUNTED, event => this.onUnmount(event)));
   }
 
   public async onRegister() {
-    this.listeners.push(this.emitter.addListener(ApplicationConstants.UNMOUNT, event => this.onUnmount(event)));
-    this.listeners.push(this.emitter.addListener(ApplicationConstants.USER_SELECTED, event => this.onSelect(event)));
+    this.listeners.push(this.emitter.addListener(this.component.USER_ROLE_FETCH, event => this.onSelect(event)));
 
     this.roleProxy = this.facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
     try {
@@ -32,9 +33,7 @@ export class UserRoleMediator extends Mediator {
   }
 
   private onUnmount(event: any) {
-    if (event.name === ApplicationConstants.USER_ROLE) {
-      this.facade.removeMediator(UserRoleMediator.NAME);
-    }
+    event === USER_ROLE_UNMOUNTED && this.facade.removeMediator(UserRoleMediator.NAME);
   }
 
   private async onSelect(event: any) {
@@ -45,6 +44,8 @@ export class UserRoleMediator extends Mediator {
     }
   }
 
-  public get component() { return this.viewComponent }
+  public get component() : IUserRole {
+    return this.viewComponent
+  }
 
 }

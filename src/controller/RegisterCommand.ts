@@ -2,24 +2,23 @@ import { INotification, SimpleCommand } from "@puremvc/puremvc-typescript-multic
 import { UserListMediator } from "../view/UserListMediator";
 import { UserFormMediator } from "../view/UserFormMediator";
 import { UserRoleMediator } from "../view/UserRoleMediator";
-import { ApplicationConstants } from "../ApplicationConstants";
+import { USER_LIST_MOUNTED, USER_FORM_MOUNTED, USER_ROLE_MOUNTED } from "../ApplicationConstants";
 
 export class RegisterCommand extends SimpleCommand {
 
   execute(notification: INotification) {
-    const component = notification.body;
-    switch (component.NAME) {
-      case ApplicationConstants.USER_LIST:
-        this.facade.registerMediator(new UserListMediator(component));
+    switch (notification.type) {
+      case USER_LIST_MOUNTED:
+        this.facade.registerMediator(new UserListMediator(notification.body));
         break;
-      case ApplicationConstants.USER_FORM:
-        this.facade.registerMediator(new UserFormMediator(component));
+      case USER_FORM_MOUNTED:
+        this.facade.registerMediator(new UserFormMediator(notification.body));
         break;
-      case ApplicationConstants.USER_ROLE:
-        this.facade.registerMediator(new UserRoleMediator(component));
+      case USER_ROLE_MOUNTED:
+        this.facade.registerMediator(new UserRoleMediator(notification.body));
         break;
       default:
-        console.log(component.NAME);
+        console.log(notification.type);
         break;
     }
   }
