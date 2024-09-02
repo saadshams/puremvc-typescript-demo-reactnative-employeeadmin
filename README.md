@@ -28,13 +28,24 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 ## Environment Setup
 
+**nodeJS**
+* Install nodeJS
+
 **Java** 
 * Install OpenJDK Zulu 17
+* Set PATH 
+`export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
 
 **Android Studio:**
 * Install Android Studio
 * Install Android SDK Command Line Tools
 * Install CMake
+* Set PATH
+```shell
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
 
 **XCode:**
 * Install XCode
@@ -81,12 +92,16 @@ npx react-native run-android
 
 Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
 [Link](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
+* Installation
 ```shell
 brew install rbenv
 rbenv install 2.7.6
 rbenv global 2.7.6
 rbenv rehash
-export PATH="$HOME/.rbenv/bin:$PATH"
+```
+* Set PATH
+```shell
+* export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 ```
 
