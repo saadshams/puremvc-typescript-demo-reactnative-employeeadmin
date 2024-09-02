@@ -3,7 +3,7 @@ import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 
-import { USER_LIST_MOUNTED, USER_LIST_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 
 interface Props {
@@ -30,9 +30,9 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
   }));
 
   useEffect(() => {
-    emitter.emit(USER_LIST_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_LIST_MOUNTED, ref.current);
     return () => {
-      emitter.emit(USER_LIST_UNMOUNTED);
+      emitter.emit(ApplicationConstants.USER_LIST_UNMOUNTED);
     };
   }, [ref]);
 

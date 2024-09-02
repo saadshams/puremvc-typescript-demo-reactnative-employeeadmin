@@ -1,5 +1,5 @@
 import { Proxy } from "@puremvc/puremvc-typescript-multicore-framework";
-import { API_URL } from "../ApplicationConstants";
+import { ApplicationConstants } from "../ApplicationConstants";
 import { Role } from "./valueObject/Role";
 
 export class RoleProxy extends Proxy {
@@ -11,7 +11,7 @@ export class RoleProxy extends Proxy {
   }
 
   public async findAllRoles(): Promise<Role[]> {
-   const response = await fetch(`${API_URL}/roles`, {method: "GET"});
+   const response = await fetch(`${ApplicationConstants.API_URL}/roles`, {method: "GET"});
    if (response.status === 200) {
      const json = await response.json();
      return json.map((role: Role) => Role.fromJson(role));
@@ -22,7 +22,7 @@ export class RoleProxy extends Proxy {
   }
 
   public async findRolesById(id: number) {
-    const response = await fetch(`${API_URL}/users/${id}/roles`, {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/users/${id}/roles`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
       return json.map((role: Role) => Role.fromJson(role));
@@ -33,7 +33,7 @@ export class RoleProxy extends Proxy {
   }
 
   public async updateRolesById(id: number, roles: [Role]) {
-    const response = await fetch(`${API_URL}/users/${id}/roles`, {method: "PUT",
+    const response = await fetch(`${ApplicationConstants.API_URL}/users/${id}/roles`, {method: "PUT",
       headers: {"content-type": "application/json"},
       body: JSON.stringify(roles)
     });

@@ -1,10 +1,10 @@
 import { NativeEventEmitter, NativeModules } from "react-native";
 
 import {SimpleCommand, INotification} from "@puremvc/puremvc-typescript-multicore-framework";
-import { USER_FORM_MOUNTED, USER_LIST_MOUNTED, USER_ROLE_MOUNTED } from "../ApplicationConstants";
+import {ApplicationConstants} from "../ApplicationConstants";
+import { ApplicationFacade } from "../ApplicationFacade";
 import { UserProxy } from "../model/UserProxy";
 import { RoleProxy } from "../model/RoleProxy";
-import { ApplicationFacade } from "../ApplicationFacade";
 
 export class StartupCommand extends SimpleCommand {
 
@@ -13,9 +13,16 @@ export class StartupCommand extends SimpleCommand {
     this.facade.registerProxy(new RoleProxy());
 
     const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-    [USER_LIST_MOUNTED, USER_FORM_MOUNTED, USER_ROLE_MOUNTED].forEach(value =>
-      emitter.addListener(value, event =>
-        this.facade.sendNotification(ApplicationFacade.REGISTER, event, value)));
+    [
+      ApplicationConstants.USER_LIST_MOUNTED, ApplicationConstants.USER_LIST_UNMOUNTED,
+      ApplicationConstants.USER_FORM_MOUNTED, ApplicationConstants.USER_FORM_UNMOUNTED,
+      ApplicationConstants.USER_ROLE_MOUNTED, ApplicationConstants.USER_ROLE_UNMOUNTED
+    ].forEach(type =>
+      emitter.addListener(type, event =>
+        this.facade.sendNotification(ApplicationFacade.REGISTER, event, type)
+      )
+    );
+
   }
 
 }

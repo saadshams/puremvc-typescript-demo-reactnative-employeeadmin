@@ -1,6 +1,5 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import { USER_ROLE_UNMOUNTED } from "../ApplicationConstants";
 import { RoleProxy } from "../model/RoleProxy";
 import { IUserRole } from "./components/UserRole";
 
@@ -14,7 +13,6 @@ export class UserRoleMediator extends Mediator {
 
   constructor(component: any) {
     super(UserRoleMediator.NAME, component);
-    this.listeners.push(this.emitter.addListener(USER_ROLE_UNMOUNTED, event => this.onUnmount(event)));
   }
 
   public async onRegister() {
@@ -30,10 +28,6 @@ export class UserRoleMediator extends Mediator {
 
   public onRemove() {
     this.listeners.forEach(listener => listener.remove());
-  }
-
-  private onUnmount(event: any) {
-    event === USER_ROLE_UNMOUNTED && this.facade.removeMediator(UserRoleMediator.NAME);
   }
 
   private async onSelect(event: any) {

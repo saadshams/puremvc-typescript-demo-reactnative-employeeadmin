@@ -1,7 +1,6 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
 import { UserProxy } from "../model/UserProxy";
-import { USER_FORM_UNMOUNTED } from "../ApplicationConstants";
 import { IUserForm } from "./components/UserForm";
 
 export class UserFormMediator extends Mediator {
@@ -14,7 +13,6 @@ export class UserFormMediator extends Mediator {
 
   constructor(component: any) {
     super(UserFormMediator.NAME, component);
-    this.listeners.push(this.emitter.addListener(USER_FORM_UNMOUNTED, event => this.onUnmount(event)));
   }
 
   public async onRegister() {
@@ -32,10 +30,6 @@ export class UserFormMediator extends Mediator {
 
   public onRemove() {
     this.listeners.forEach(listener => listener.remove());
-  }
-
-  private onUnmount(event: any) {
-    event === USER_FORM_UNMOUNTED && this.facade.removeMediator(UserFormMediator.NAME);
   }
 
   private async onFetch(event: any) {

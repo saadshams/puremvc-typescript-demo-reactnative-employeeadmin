@@ -1,7 +1,7 @@
 import { Proxy } from "@puremvc/puremvc-typescript-multicore-framework";
-import { API_URL } from "../ApplicationConstants";
 import { User } from "./valueObject/User";
 import { Department } from "./valueObject/Department";
+import { ApplicationConstants } from "../ApplicationConstants";
 
 export class UserProxy extends Proxy {
 
@@ -12,7 +12,7 @@ export class UserProxy extends Proxy {
   }
 
   public async findAllUsers(): Promise<User[]> {
-    const response = await fetch(`${API_URL}/users`, {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/users`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
       return json.map((user: User) => new User(user.id, "", user.first, user.last));
@@ -23,7 +23,7 @@ export class UserProxy extends Proxy {
   }
 
   public async findUserById(id: number): Promise<User> {
-    const response = await fetch(`${API_URL}/users/${id}`, {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/users/${id}`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
       return User.fromJson(json);
@@ -34,7 +34,7 @@ export class UserProxy extends Proxy {
   }
 
   async save(user: User) {
-    const response = await fetch(`${API_URL}/users`, { method: "POST",
+    const response = await fetch(`${ApplicationConstants.API_URL}/users`, { method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(user)
     });
@@ -49,7 +49,7 @@ export class UserProxy extends Proxy {
   }
 
   async update(user: User) {
-    const response = await fetch(`${API_URL}/users/${user.id}`, { method: "PUT",
+    const response = await fetch(`${ApplicationConstants.API_URL}/users/${user.id}`, { method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(user)
     });
@@ -64,7 +64,7 @@ export class UserProxy extends Proxy {
   }
 
   public async findAllDepartments(): Promise<Department[]> {
-    const response = await fetch(`${API_URL}/departments`, {method: "GET"});
+    const response = await fetch(`${ApplicationConstants.API_URL}/departments`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
       const departments = json.map((department: Department) => Department.fromJson(department));

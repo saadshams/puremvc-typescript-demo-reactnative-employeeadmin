@@ -4,7 +4,7 @@ import { RouteProp } from "@react-navigation/native";
 import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { USER_ROLE_MOUNTED, USER_ROLE_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
 import { Role } from "../../model/valueObject/Role";
 
 interface Props {
@@ -34,12 +34,12 @@ const UserRole: React.FC<Props> = ({ navigation, route }) => {
   }));
 
   useEffect(() => {
-    emitter.emit(USER_ROLE_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, ref.current);
     if (route.params?.user.id)
       emitter.emit(ref.current.USER_ROLE_FETCH, {id: route.params?.user.id});
 
     return () => {
-      emitter.emit(USER_ROLE_UNMOUNTED);
+      emitter.emit(ApplicationConstants.USER_ROLE_UNMOUNTED);
     }
   }, [ref]);
 

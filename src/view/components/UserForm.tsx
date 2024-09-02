@@ -4,7 +4,7 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
 
-import { USER_FORM_MOUNTED, USER_FORM_UNMOUNTED, ParamList } from "../../ApplicationConstants";
+import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
 
@@ -43,13 +43,13 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
   }));
 
   useEffect(() => { // mount
-    emitter.emit(USER_FORM_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, ref.current);
     if (route.params?.user.id) { // fetch user - if id is passed from UserList
       console.log("fetching user");
       emitter.emit(ref.current.USER_FETCH, { id: route.params?.user.id });
     }
     return () => {
-      emitter.emit(USER_FORM_UNMOUNTED);
+      emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
     }
   }, [ref]);
 
