@@ -29,22 +29,27 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 ## Environment Setup
 
 **nodeJS**
-* Install nodeJS
+* Mac: Install nodeJS (LTS version)
+* Windows: Chocolaty (LTS Version) 
 
 **Java** 
-* Install OpenJDK Zulu 17
-* Set PATH 
-`export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
+* Mac: Install OpenJDK Zulu 17 - Set PATH `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
+* Windows: Install Windows JDK via chocolaty and set PATH
 
 **Android Studio:**
 * Install Android Studio
 * Install Android SDK Command Line Tools
+* NDK Tools (match version with android/build.gradle)
 * Install CMake
-* Set PATH
+* Mac PATH
 ```shell
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+* Windows PATH
+```shell
+PATH
 ```
 
 **XCode:**
@@ -55,25 +60,14 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 * Install Cocoapods `sudo gem install cocoapods`
 
 ## Project Setup
-`npx react-native init EmployeeAdmin`
+* Init Project: `npx react-native init EmployeeAdmin`
+* Build Android: `cd android && ./gradlew clean` | `windows command`
+* Build iOS: `cd io && pod install`
 
-**iOS Setup**
-```shell
-cd ios
-pod install
-```
 * Open Workspace in XCode or run `"xed -b ios"` and wait for file indexing
 * Select Product > Clean Build Folder
 * Optionally, Select Product > Build to launch the terminal and start the Metro server.
 
-**Android Setup**
-* Open the project in Android Studio and wait for Gradle to sync and finish
-* Ensure the `ndkVersion` in **build.gradle** matches the installed NDK version
-* Clean and Rebuild the Project
-```shell
-cd android
-./gradlew clean
-```
 
 ## Project Launch
 CLI Commands
