@@ -103,7 +103,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
   ```
 
 ### Project
-Init Project: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
+Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 
 ## Troubleshooting
 * `ENOENT` error on Windows: Create `npm` folder in `C:\Users\{username}\AppData\Roaming`
@@ -126,7 +126,7 @@ Init Project: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 * [Sample Apps](https://github.com/SamuelOkoroShow)
 
 ## License
-* PureMVC TypeScript React Native Demo - Employee Admin - Copyright © 2024 [Saad Shams](https://www.linkedin.com/in/muizz)
+* PureMVC TypeScript React Native Demo - Employee Admin - Copyright © 2024 [Saad Shams](https://www.linkedin.com/in/muizz), [Cliff Hall](https://www.linkedin.com/in/cliff)
 * PureMVC Copyright © 2024 Futurescale, Inc.
 * All rights reserved.
 
