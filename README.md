@@ -28,80 +28,87 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 ## Environment Setup
 
-**nodeJS**
-* Mac: Install nodeJS (LTS version)
-* Windows: Chocolaty (LTS Version) 
+**NodeJS**
+* Mac: **NodeJS** Installation (LTS Recommended)
+* Windows: [Install Chocolaty](https://chocolatey.org/install) and run `choco install -y nodejs-lts`
 
 **Java** 
-* Mac: Install OpenJDK Zulu 17 - Set PATH `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
-* Windows: Install Windows JDK via chocolaty and set PATH
+* Mac: 
+  * OpenJDK Zulu 17: 
+  * Add to .zshrc: `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
+* Windows: 
+  * Microsoft OpenJDK 17: `choco install -y microsoft-openjdk17`
+  * Set Variable `JAVA_HOME`: `C:\Program Files\Microsoft\jdk-17.0.12.7-hotspot`
+  * Add to `PATH`: `C:\Program Files\Microsoft\jdk-17.0.12.7-hotspot\bin`
 
 **Android Studio:**
-* Install Android Studio
-* Install Android SDK Command Line Tools
-* NDK Tools (match version with android/build.gradle)
-* Install CMake
-* Mac PATH
-```shell
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-```
-* Windows PATH
-```shell
-PATH
-```
+* Android Studio Installation
+* Android SDK Command Line Tools
+* NDK Tools: Confirm `ndkVersion` with `android/build.gradle`
+* CMake
+* Virtual Device
+  * Mac: Add to .zshrc
+  ```shell
+    export ANDROID_HOME=$HOME/Library/Android/sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/tools
+    export PATH=$PATH:$ANDROID_HOME/tools/bin
+    ```
+    * Windows: 
+      * Set Variable `ANDROID_HOME`: `C:\Users\{username}\AppData\Local\Android\Sdk`
+      * Add to `PATH`
+    ```shell
+    C:\Users\{username}\AppData\Local\Android\Sdk
+    C:\Users\{username}\AppData\Local\Android\Sdk\platform-tools
+    C:\Users\{username}\AppData\Local\Android\Sdk\emulator
+    C:\Users\{username}\AppData\Local\Android\Sdk\tools
+    C:\Users\{username}\AppData\Local\Android\Sdk\tools\bin
+    ```
 
 **XCode:**
-* Install XCode
-* Go to Xcode Preferences > Locations and select Command Line Tools.
+* XCode Installation
+* Go to **Xcode Preferences** > **Locations** and select **Command Line Tools**.
 
 **Cocoapods**
-* Install Cocoapods `sudo gem install cocoapods`
+* `sudo gem install cocoapods`
 
-## Project Setup
+## Project
 * Init Project: `npx react-native init EmployeeAdmin`
-* Build Android: `cd android && ./gradlew clean` | `windows command`
-* Build iOS: `cd io && pod install`
+* Build Android: 
+  * Mac: `cd android && ./gradlew clean && cd ..`
+  * Windows: `cd android && .\gradlew clean && cd ..`
+* Build iOS: `cd ios && pod install && cd ..`
+  * Or open Workspace or run `"xed -b ios"` | Product -> Clean Build Folder | Product -> Build to Start Server
+* Start Server: `npx react-native start` | `npx react-native start --port 9988`
+* Launch Android: `npx react-native run-android`
+* Launch iOS: `npx react-native run-ios` | `npx react-native run-ios --simulator="iPhone 14 Pro"`
 
-* Open Workspace in XCode or run `"xed -b ios"` and wait for file indexing
-* Select Product > Clean Build Folder
-* Optionally, Select Product > Build to launch the terminal and start the Metro server.
+## XCode 14.2 - MacPro Late 2013 - React Native v0.71
+### Ruby 2.7.6:
+* Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
+[Reference](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
 
+  ```shell
+  brew install rbenv
+  rbenv install 2.7.6
+  rbenv global 2.7.6
+  rbenv rehash
+  ```
+* Add to .zshrc
+  ```shell
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+  ```
 
-## Project Launch
-CLI Commands
-```shell
-npx react-native start  
-npx react-native start --port 9988
-
-npx react-native run-ios
-npx react-native run-ios --simulator="iPhone 14 Pro"
-
-npx react-native run-android
-```
-
-## Older Versions: XCode 14.2 (MacPro Late 2013)
-`npx react-native@0.71 init EmployeeAdmin --version 0.71`
-
-Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
-[Link](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
-* Installation
-```shell
-brew install rbenv
-rbenv install 2.7.6
-rbenv global 2.7.6
-rbenv rehash
-```
-* Set PATH
-```shell
-* export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-```
+### Project
+Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 
 ## Troubleshooting
-* Rebuild Android: `cd android && ./gradlew clean && cd ..`
+* `ENOENT` error on Windows: Create `npm` folder in `C:\Users\{username}\AppData\Roaming`
 * Clear Cache: `npx react-native start --reset-cache`
+* Rebuild Android: `cd android && ./gradlew clean && cd ..`
 
 ## UI Libraries
 * [React Native Elements](https://reactnativeelements.com)
@@ -115,11 +122,11 @@ eval "$(rbenv init -)"
 * [Restyle](https://github.com/Shopify/restyle)
 
 ## Examples
-[F8app](https://github.com/fbsamples/f8app)
-[Sample Apps](https://github.com/SamuelOkoroShow)
+* [F8app](https://github.com/fbsamples/f8app)
+* [Sample Apps](https://github.com/SamuelOkoroShow)
 
 ## License
-* PureMVC TypeScript React Native Demo - Employee Admin - Copyright © 2024 [Saad Shams](https://www.linkedin.com/in/muizz)
+* PureMVC TypeScript React Native Demo - Employee Admin - Copyright © 2024 [Saad Shams](https://www.linkedin.com/in/muizz), [Cliff Hall](https://www.linkedin.com/in/cliff)
 * PureMVC Copyright © 2024 Futurescale, Inc.
 * All rights reserved.
 
