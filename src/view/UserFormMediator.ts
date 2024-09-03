@@ -22,7 +22,7 @@ export class UserFormMediator extends Mediator {
 
     this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
     try {
-      this.component.setDepartments(await this.userProxy?.findAllDepartments())
+      this.component.setDepartments(await this.userProxy.findAllDepartments())
     } catch(error) {
       console.log(error);
     }
@@ -51,7 +51,7 @@ export class UserFormMediator extends Mediator {
 
   private async onUpdate(event: any) {
     try {
-      this.component.goBack(await this.userProxy!.update(event.user));
+      this.component.goBack(await this.userProxy.update(event.user));
     } catch (error) {
       console.log(error);
     }

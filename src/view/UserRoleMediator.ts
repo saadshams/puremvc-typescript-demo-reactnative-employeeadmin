@@ -20,7 +20,7 @@ export class UserRoleMediator extends Mediator {
 
     this.roleProxy = this.facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
     try {
-      this.component.setRoles(await this.roleProxy?.findAllRoles());
+      this.component.setRoles(await this.roleProxy.findAllRoles());
     } catch(error) {
       console.log(error);
     }
@@ -32,7 +32,7 @@ export class UserRoleMediator extends Mediator {
 
   private async onSelect(event: any) {
     try {
-      this.component.setData(await this.roleProxy?.findRolesById(event.id));
+      this.component.setData(await this.roleProxy.findRolesById(event.id));
     } catch(error) {
       console.log(error);
     }

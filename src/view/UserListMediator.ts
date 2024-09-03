@@ -15,7 +15,7 @@ export class UserListMediator extends Mediator {
   public async onRegister() {
     this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
     try {
-      this.component.setUsers(await this.userProxy?.findAllUsers());
+      this.component.setUsers(await this.userProxy.findAllUsers());
     } catch(error) {
       console.log(error);
     }
