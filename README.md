@@ -34,7 +34,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 **Java** 
 * Mac: 
-  * OpenJDK Zulu 17: 
+  * OpenJDK Zulu 17: `brew install --cask zulu@17`
   * Add to .zshrc: `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
 * Windows: 
   * Microsoft OpenJDK 17: `choco install -y microsoft-openjdk17`

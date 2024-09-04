@@ -1,3 +1,11 @@
+//
+//  Application.tsx
+//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//
+//  Copyright(c) 2024 Saad Shams <saad.shams@puremvc.org>
+//  Your reuse is governed by the BSD 3-Clause License
+//
+
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

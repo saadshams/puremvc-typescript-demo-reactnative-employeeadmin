@@ -1,3 +1,11 @@
+//
+//  UserList.tsx
+//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//
+//  Copyright(c) 2024 Saad Shams <saad.shams@puremvc.org>
+//  Your reuse is governed by the BSD 3-Clause License
+//
+
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
