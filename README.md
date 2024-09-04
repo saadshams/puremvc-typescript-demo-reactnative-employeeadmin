@@ -111,6 +111,7 @@ Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 * Rebuild Android: `cd android && ./gradlew clean && cd ..`
 
 ## UI Libraries
+* [Material Design](https://rn-material.js.org/)
 * [React Native Elements](https://reactnativeelements.com)
 * [React Native Paper](https://reactnativepaper.com)
 * [Tamagui](https://tamagui.dev)
