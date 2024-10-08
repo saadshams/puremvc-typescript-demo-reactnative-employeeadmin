@@ -42,7 +42,7 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
     return () => {
       emitter.emit(ApplicationConstants.USER_LIST_UNMOUNTED);
     };
-  }, [ref]);
+  }, [emitter, ref]);
 
   useEffect(() => {
     if (route.params?.user.roles) { // updated user from the User Form
@@ -57,7 +57,7 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   const onPress = (user: User) => {
     navigation.navigate("UserForm", { user: user });
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
