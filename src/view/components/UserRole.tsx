@@ -27,11 +27,11 @@ export interface IUserRole {
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
-  const [roles, setRoles] = useState<Role[]>();
-  const [data, setData] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<Role[]>(); // Application Data
+  const [data, setData] = useState<Role[]>([]); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
-  const component = useMemo(() => ({
+  const component: IUserRole = useMemo(() => ({
     USER_ROLE_FETCH: "UserRoleFetch",
     setRoles: setRoles,
     setData: setData

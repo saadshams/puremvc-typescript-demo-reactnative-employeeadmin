@@ -31,8 +31,8 @@ export interface IUserForm {
 
 const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
-  const [user, setUser] = useState<User>(new User());
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]); // Application Data
+  const [user, setUser] = useState<User>(new User()); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserForm = useMemo(() => ({

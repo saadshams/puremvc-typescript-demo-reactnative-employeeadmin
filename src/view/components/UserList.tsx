@@ -25,7 +25,7 @@ export interface IUserList {
 
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserList = useMemo(() => ({
