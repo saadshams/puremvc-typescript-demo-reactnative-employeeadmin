@@ -55,13 +55,13 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 * Virtual Device
   * Mac: Add to .zshrc
   ```shell
-    export ANDROID_HOME=$HOME/Library/Android/sdk
-    export PATH=$PATH:$ANDROID_HOME/emulator
-    export PATH=$PATH:$ANDROID_HOME/platform-tools
-    export PATH=$PATH:$ANDROID_HOME/emulator
-    export PATH=$PATH:$ANDROID_HOME/tools
-    export PATH=$PATH:$ANDROID_HOME/tools/bin
-    ```
+  export ANDROID_HOME=$HOME/Library/Android/sdk
+  export PATH=$PATH:$ANDROID_HOME/emulator
+  export PATH=$PATH:$ANDROID_HOME/platform-tools
+  export PATH=$PATH:$ANDROID_HOME/emulator
+  export PATH=$PATH:$ANDROID_HOME/tools
+  export PATH=$PATH:$ANDROID_HOME/tools/bin
+  ```
     * Windows: 
       * Set Variable `ANDROID_HOME`: `C:\Users\{username}\AppData\Local\Android\Sdk`
       * Add to `PATH`

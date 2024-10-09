@@ -53,7 +53,7 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   const onPress = (user: User) => {
     navigation.navigate("UserForm", { user: user });
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
