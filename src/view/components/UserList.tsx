@@ -6,12 +6,11 @@
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
-
-import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
+import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 
 interface Props {
@@ -21,7 +20,6 @@ interface Props {
 
 export interface IUserList {
   DELETE: string,
-
   setUsers: (users: User[]) => void
 }
 
@@ -29,20 +27,18 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   const [users, setUsers] = useState<User[]>([]);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef<IUserList>(null!);
 
-  useImperativeHandle(ref, () => ({
+  const component: IUserList = useMemo(() => ({
     DELETE: "UserListDelete",
-
     setUsers: setUsers,
-  }));
+  }), [setUsers]);
 
   useEffect(() => {
-    emitter.emit(ApplicationConstants.USER_LIST_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_LIST_MOUNTED, component);
     return () => {
       emitter.emit(ApplicationConstants.USER_LIST_UNMOUNTED);
     };
-  }, [ref]);
+  }, [component]);
 
   useEffect(() => {
     if (route.params?.user.roles) { // updated user from the User Form

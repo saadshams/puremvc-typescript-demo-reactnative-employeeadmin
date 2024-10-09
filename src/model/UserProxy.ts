@@ -75,9 +75,7 @@ export class UserProxy extends Proxy {
     const response = await fetch(`${ApplicationConstants.API_URL}/departments`, {method: "GET"});
     if (response.status === 200) {
       const json = await response.json();
-      const departments = json.map((department: Department) => Department.fromJson(department));
-      departments.unshift(Department.NONE_SELECTED);
-      return departments;
+      return json.map((department: Department) => Department.fromJson(department));
     } else {
       const error = await response.json();
       throw new Error(error.message);
