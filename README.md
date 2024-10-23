@@ -91,7 +91,9 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 * Launch Android: `npx react-native run-android`
 * Launch iOS: `npx react-native run-ios` | `npx react-native run-ios --simulator="iPhone 14 Pro"`
 
-## XCode 16
+## Expo
+`expo init project-name`
+
 **ERROR**: Error installing cocoapods: The last version of drb (>= 0) to support your Ruby & RubyGems was 2.0.6. 
 Try installing it with `gem install drb -v 2.0.6` and then running the current command again
 drb requires Ruby version >= 2.7.0. The current ruby version is 2.6.10.210.
@@ -132,11 +134,10 @@ Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 ```shell
 emulator -list-avds
 emulator -avd <emulator_name>
-emulator -avd Pixel_Tablet_API_R
 ```
 
 ## Installation
-`adb -s emulator-5554 shell am start -a android.intent.action.VIEW -d exp://10.210.20.236:8081`
+`adb -s emulator-5556 shell am start -a android.intent.action.VIEW -d exp://10.210.20.236:8081`
 
 ## Reset Server
 ```
