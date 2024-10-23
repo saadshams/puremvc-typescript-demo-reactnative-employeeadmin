@@ -6,13 +6,12 @@
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NativeEventEmitter, NativeModules, ScrollView, StyleSheet, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
-
-import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
+import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { Role } from "../../model/valueObject/Role";
 
 interface Props {
@@ -22,34 +21,31 @@ interface Props {
 
 export interface IUserRole {
   USER_ROLE_FETCH: string;
-
   setRoles: (roles: Role[]) => void;
   setData: (data: Role[]) => void;
 }
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
-  const [roles, setRoles] = useState<Role[]>();
-  const [data, setData] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<Role[]>(); // Application Data
+  const [data, setData] = useState<Role[]>([]); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef<IUserRole>(null!);
 
-  useImperativeHandle(ref, () => ({
+  const component: IUserRole = useMemo(() => ({
     USER_ROLE_FETCH: "UserRoleFetch",
-
     setRoles: setRoles,
     setData: setData
-  }));
+  }), [setRoles, setData]);
 
   useEffect(() => {
-    emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, component);
     if (route.params?.user.id)
-      emitter.emit(ref.current.USER_ROLE_FETCH, {id: route.params?.user.id});
+      emitter.emit(component.USER_ROLE_FETCH, {id: route.params?.user.id});
 
     return () => {
       emitter.emit(ApplicationConstants.USER_ROLE_UNMOUNTED);
     }
-  }, [ref]);
+  }, [component]);
 
   const onChange = (role: Role) => {
     setData((state) => {

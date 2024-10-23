@@ -6,13 +6,12 @@
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NativeEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
-
-import {ApplicationConstants, ParamList} from "../../ApplicationConstants";
+import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
 
@@ -25,7 +24,6 @@ export interface IUserForm {
   USER_FETCH: string,
   USER_SAVE: string,
   USER_UPDATE: string,
-
   setUser: (user: User) => void,
   setDepartments: (departments: Department[]) => void,
   goBack: (u: User) => void
@@ -33,38 +31,34 @@ export interface IUserForm {
 
 const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
-  const [user, setUser] = useState<User>(new User());
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]); // Application Data
+  const [user, setUser] = useState<User>(new User()); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
-  const ref = useRef<IUserForm>(null!);
 
-  useImperativeHandle(ref, () => ({
+  const component: IUserForm = useMemo(() => ({
     USER_FETCH: "UserFormFetch",
     USER_SAVE: "UserFormSave",
     USER_UPDATE: "UserFormUpdate",
-
     setUser: setUser,
     setDepartments: setDepartments,
     goBack: (u: User) => {
       navigation.navigate("UserList", { user: u })
     }
-  }));
+  }), [setUser, setDepartments]);
 
   useEffect(() => { // mount
-    emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, ref.current);
+    emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, component);
     if (route.params?.user.id) { // fetch user - if id is passed from UserList
-      console.log("fetching user");
-      emitter.emit(ref.current.USER_FETCH, { id: route.params?.user.id });
+      emitter.emit(component.USER_FETCH, { id: route.params?.user.id });
     }
     return () => {
       emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
     }
-  }, [ref]);
+  }, [component]);
 
   // set roles if roles are passed from User Role
   useEffect(() => {
     if (route.params?.user.roles) { // (race condition)
-      console.log("received & updating roles", route.params?.user.roles);
       setUser((state: User) => (
         {...state, roles: route.params?.user.roles}
       ));
@@ -82,7 +76,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
   // department value change handler
   const onValueChange = (value: number, index: number) => {
     setUser((state: User) => (
-      { ...state, department: departments.find(d => d.id === value)} as User
+      { ...state, department: value === 0 ? Department.NONE_SELECTED : departments.find(d => d.id === value)} as User
     ));
   }
 
@@ -93,8 +87,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
   // save press handler
   const onSave = (event: any) => {
-    console.log("on press save or update", user.roles);
-    emitter.emit(user.id === 0 ? ref.current.USER_SAVE : ref.current.USER_UPDATE, {user: user});
+    emitter.emit(user.id === 0 ? component.USER_SAVE : component.USER_UPDATE, {user: user});
   }
 
   // cancel press handler
@@ -117,7 +110,8 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
         <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => setUser( ({...user, confirm: value } as User) )} />
       </View>
       <View style={styles.row}>
-        <Picker style={styles.input} selectedValue={user.department.id} onValueChange={onValueChange}>
+        <Picker style={styles.input} selectedValue={user.department?.id} onValueChange={onValueChange}>
+          <Picker.Item label="---None Selected---" value="{0}" />
           {departments?.map((department) => (
             <Picker.Item key={department.key} label={department.name} value={department.id} />
           ))}

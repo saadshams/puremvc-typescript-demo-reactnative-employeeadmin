@@ -8,8 +8,8 @@
 
 import { NativeEventEmitter, NativeModules } from "react-native";
 
-import {SimpleCommand, INotification} from "@puremvc/puremvc-typescript-multicore-framework";
-import {ApplicationConstants} from "../ApplicationConstants";
+import { SimpleCommand, INotification } from "@puremvc/puremvc-typescript-multicore-framework";
+import { ApplicationConstants } from "../ApplicationConstants";
 import { ApplicationFacade } from "../ApplicationFacade";
 import { UserProxy } from "../model/UserProxy";
 import { RoleProxy } from "../model/RoleProxy";

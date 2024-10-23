@@ -7,7 +7,7 @@
 //
 
 import { INotification, SimpleCommand } from "@puremvc/puremvc-typescript-multicore-framework";
-import {ApplicationConstants} from "../ApplicationConstants";
+import { ApplicationConstants } from "../ApplicationConstants";
 import { UserListMediator } from "../view/UserListMediator";
 import { UserFormMediator } from "../view/UserFormMediator";
 import { UserRoleMediator } from "../view/UserRoleMediator";

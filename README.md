@@ -14,6 +14,12 @@ cd puremvc-typescript-demo-reactnative-employeeadmin
 npm start
 ```
 
+## Usage
+
+`* Import assets/postman.json collection into postman
+`* Launch [Adminer](http://localhost:8080/?server=mysql&username=mysql&db=employeeadmin) pwd: password
+
+
 ## Screenshot
 ![PureMVC ReactNative Demo: Employee Admin]()
 

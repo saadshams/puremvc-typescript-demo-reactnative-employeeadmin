@@ -43,7 +43,6 @@ export class UserFormMediator extends Mediator {
   private async onFetch(event: any) {
     try {
       this.component.setUser(await this.userProxy.findUserById(event.id));
-      console.log("user set");
     } catch (error) {
       console.log(error);
     }
