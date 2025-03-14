@@ -81,7 +81,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 **Cocoapods**
 * `sudo gem install cocoapods`
 
-  * **Cocoapods with Xcode 16.2 requires Ruby version >= 3.1.0**:
+  * **Cocoapods with Xcode 16.2 requires Ruby version >= 3.1.0**: Using Homebrew & rbenv
       ```shell
       brew install rbenv ruby-build
       rbenv install 3.2.2
