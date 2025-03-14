@@ -40,6 +40,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 **Java** 
 * Mac: 
+  * Install Brew: https://brew.sh
   * OpenJDK Zulu 17: `brew install --cask zulu@17`
   * Add to .zshrc: `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
 * Windows: 
@@ -80,6 +81,30 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 **Cocoapods**
 * `sudo gem install cocoapods`
 
+  * **Cocoapods with Xcode 16.2 requires Ruby version >= 3.1.0**:
+      ```shell
+      brew install rbenv ruby-build
+      rbenv install 3.2.2
+      rbenv global 3.2.2
+      ```
+      
+  * **Cocoapods with XCode 14.2 requires Ruby version 2.7.6** - MacPro Late 2013 - React Native v0.71. 
+    Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
+  [Reference](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
+      ```shell
+      brew install rbenv
+      rbenv install 2.7.6
+      rbenv global 2.7.6
+      ```
+  * Restart your terminal. Add to .zshrc
+    ```shell
+    export PATH="$HOME/.r[README.md](README.md)benv/bin:$PATH"
+    eval "$(rbenv init -)"
+    ```
+    
+  * Verify Ruby Version `ruby -v`
+  * Reinstall Cocoapods: `sudo gem install cocoapods`
+
 ## Project
 * Init Project: `npx react-native init EmployeeAdmin`
 * Build Android: 
@@ -93,30 +118,6 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 
 ## Expo
 `expo init project-name`
-
-**ERROR**: Error installing cocoapods: The last version of drb (>= 0) to support your Ruby & RubyGems was 2.0.6. 
-Try installing it with `gem install drb -v 2.0.6` and then running the current command again
-drb requires Ruby version >= 2.7.0. The current ruby version is 2.6.10.210.
-
-* It looks like the issue is due to your current Ruby version being too old for the required drb gem.
-* Update rbenv to 2.7.6
-
-## XCode 14.2 - MacPro Late 2013 - React Native v0.71
-### Ruby 2.7.6:
-* Cocoapods with **react-native v0.71** toolset expects **Ruby version 2.7.6**
-[Reference](https://stackoverflow.com/questions/78099206/react-native-init-cocoapods-was-resolved)
-
-  ```shell
-  brew install rbenv
-  rbenv install 2.7.6
-  rbenv global 2.7.6
-  rbenv rehash
-  ```
-* Add to .zshrc
-  ```shell
-  export PATH="$HOME/.r[README.md](README.md)benv/bin:$PATH"
-  eval "$(rbenv init -)"
-  ```
 
 ### Project
 Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
