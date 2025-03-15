@@ -106,7 +106,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
   * Reinstall Cocoapods: `sudo gem install cocoapods`
 
 ## Project
-* Init Project: `npx react-native init EmployeeAdmin`
+* Init Project: `npx @react-native-community/cli init EmployeeAdmin`
 * Build Android: 
   * Mac: `cd android && ./gradlew clean && cd ..`
   * Windows: `cd android && .\gradlew clean && cd ..`
