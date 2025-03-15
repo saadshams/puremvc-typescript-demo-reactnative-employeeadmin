@@ -110,7 +110,7 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 * Build Android: Have an Android emulator running (quickest way to get started), or a device connected.
   * Mac: `npx react-native run-android` || `cd android && ./gradlew clean && cd ..`
   * Windows: `cd android && .\gradlew clean && cd ..`
-* Build iOS: `npx react-native run-ios` | `cd ios && pod install && cd ..`
+* Build iOS: `cd ios && pod install && cd ..`
   * Or open Workspace or run `"xed -b ios"` | Product -> Clean Build Folder | Product -> Build to Start Server
 * Start Server: `npx react-native start` | `npx react-native start --port 9988`
 * Launch Android: `npx react-native run-android`
