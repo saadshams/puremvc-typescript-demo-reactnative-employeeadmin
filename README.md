@@ -35,14 +35,16 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 ## Environment Setup
 
 **NodeJS**
-* Mac: **NodeJS** Installation (LTS Recommended)
+* Mac: [Install NodeJS ](https://nodejs.org/)(LTS Recommended)
 * Windows: [Install Chocolaty](https://chocolatey.org/install) and run `choco install -y nodejs-lts`
 
 **Java** 
 * Mac: 
   * Install Brew: https://brew.sh
   * OpenJDK Zulu 17: `brew install --cask zulu@17`
-  * Add to .zshrc: `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`
+  * Terminal: `echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home' >> "$HOME/.zshrc"`
+  * Or Add to .zshrc: `export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home`)
+
 * Windows: 
   * Microsoft OpenJDK 17: `choco install -y microsoft-openjdk17`
   * Set Variable `JAVA_HOME`: `C:\Program Files\Microsoft\jdk-17.0.12.7-hotspot`
@@ -51,13 +53,21 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 **Android Studio:**
 * Android Studio Installation
 * Android SDK Command Line Tools
-* NDK Tools: Confirm `ndkVersion` with `android/build.gradle`
 * CMake
 * Virtual Device
-  * Mac: Add to .zshrc
+  * Mac: Command line
+  ```shell
+    cat << 'EOF' >> "$HOME/.zshrc"
+    export ANDROID_HOME=$HOME/Library/Android/sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
+    export PATH=$PATH:$ANDROID_HOME/tools
+    export PATH=$PATH:$ANDROID_HOME/tools/bin
+    EOF
+  ```
+  * Mac: Or add manually to .zshrc
   ```shell
   export ANDROID_HOME=$HOME/Library/Android/sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator
   export PATH=$PATH:$ANDROID_HOME/platform-tools
   export PATH=$PATH:$ANDROID_HOME/emulator
   export PATH=$PATH:$ANDROID_HOME/tools
@@ -96,9 +106,17 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
       rbenv install 2.7.6
       rbenv global 2.7.6
       ```
-  * Restart your terminal. Add to .zshrc
+  * Terminal: Restart Terminal.
     ```shell
-    export PATH="$HOME/.r[README.md](README.md)benv/bin:$PATH"
+    cat << 'EOF' >> "$HOME/.zshrc"
+    export PATH="$HOME/.rbenv/bin:$PATH"
+    eval "$(rbenv init -)"
+    EOF
+    ```
+
+  * Manual: Add to .zshrc. Restart Terminal.
+    ```shell
+    export PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init -)"
     ```
     
@@ -108,18 +126,18 @@ Production - [Version 1.0.0](https://github.com/PureMVC/puremvc-js-demo-react-em
 ## Project
 * Init Project: `npx @react-native-community/cli init EmployeeAdmin`
 * Build Android: Have an Android emulator running (quickest way to get started), or a device connected.
-  * Mac: `npx react-native run-android` || `cd android && ./gradlew clean && cd ..`
+  * Mac: `npx react-native run-android` | `cd android && ./gradlew clean && cd ..`
   * Windows: `cd android && .\gradlew clean && cd ..`
 * Build iOS: `cd ios && pod install && cd ..`
   * Or open Workspace or run `"xed -b ios"` | Product -> Clean Build Folder | Product -> Build to Start Server
-* Start Server: `npx react-native start` | `npx react-native start --port 9988`
-* Launch Android: `npx react-native run-android`
-* Launch iOS: `npx react-native run-ios` | `npx react-native run-ios --simulator="iPhone 14 Pro"`
+* Start Server: `npm run start` | `npx react-native start` | `npx react-native start --port 9988`
+* Launch Android: `npm run android` | `npx react-native run-android`
+* Launch iOS: `npm run ios` | `npx react-native run-ios` | `npx react-native run-ios --simulator="iPhone 14 Pro"`
 
 ## Expo
 `expo init project-name`
 
-### Project
+### Project (XCode 14.2 with Ruby version 2.7.6** - MacPro Late 2013)
 Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
 
 ## Troubleshooting
