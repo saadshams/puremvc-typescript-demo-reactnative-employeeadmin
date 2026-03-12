@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@puremvc/puremvc-typescript-multicore-framework": "^2.0.0",
+    "@puremvc/puremvc-typescript-multicore-framework": "^2.2.0",
     "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
