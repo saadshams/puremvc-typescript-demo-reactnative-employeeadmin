@@ -8,7 +8,7 @@
 
 import { Platform } from "react-native";
 import { UserVO } from "./model/valueObject/UserVO";
-import {RoleEnum} from "./model/enum/RoleEnum";
+import { RoleEnum } from "./model/enum/RoleEnum";
 
 export class ApplicationConstants {
   static USER_LIST_MOUNTED = "userListMounted";

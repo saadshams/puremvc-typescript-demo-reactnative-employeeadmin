@@ -45,7 +45,7 @@ export class UserFormMediator extends Mediator {
   private async onSave(event: any) {
     try {
       this.userProxy.save(event.user);
-      this.component.goBack();
+      this.component.goBack(event.user);
     } catch (error) {
       console.log(error);
     }

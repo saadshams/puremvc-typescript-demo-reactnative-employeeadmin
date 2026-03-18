@@ -13,8 +13,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { UserVO } from "../../model/valueObject/UserVO";
-import {DeptEnum} from "../../model/enum/DeptEnum";
-import {RoleEnum} from "../../model/enum/RoleEnum";
+import { DeptEnum } from "../../model/enum/DeptEnum";
+import { RoleEnum } from "../../model/enum/RoleEnum";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;

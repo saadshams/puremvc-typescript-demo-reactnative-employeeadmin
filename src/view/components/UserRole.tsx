@@ -12,7 +12,7 @@ import { RouteProp } from "@react-navigation/native";
 import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import {RoleEnum} from "../../model/enum/RoleEnum";
+import { RoleEnum } from "../../model/enum/RoleEnum";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;

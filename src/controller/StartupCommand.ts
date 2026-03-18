@@ -13,8 +13,8 @@ import { ApplicationConstants } from "../ApplicationConstants";
 import { ApplicationFacade } from "../ApplicationFacade";
 import { UserProxy } from "../model/UserProxy";
 import { RoleProxy } from "../model/RoleProxy";
-import {UserVO} from "../model/valueObject/UserVO";
-import {DeptEnum} from "../model/enum/DeptEnum";
+import { UserVO } from "../model/valueObject/UserVO";
+import { DeptEnum } from "../model/enum/DeptEnum";
 
 export class StartupCommand extends SimpleCommand {
 
