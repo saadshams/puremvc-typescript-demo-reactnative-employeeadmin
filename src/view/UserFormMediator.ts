@@ -24,16 +24,10 @@ export class UserFormMediator extends Mediator {
   }
 
   public async onRegister() {
+    this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
     this.listeners.push(this.emitter.addListener(this.component.USER_FETCH, event => this.onFetch(event)));
     this.listeners.push(this.emitter.addListener(this.component.USER_SAVE, event => this.onSave(event)));
     this.listeners.push(this.emitter.addListener(this.component.USER_UPDATE, event => this.onUpdate(event)));
-
-    this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
-    try {
-      this.component.setDepartments(await this.userProxy.findAllDepartments())
-    } catch(error) {
-      console.log(error);
-    }
   }
 
   public onRemove() {
@@ -42,7 +36,7 @@ export class UserFormMediator extends Mediator {
 
   private async onFetch(event: any) {
     try {
-      this.component.setUser(await this.userProxy.findUserById(event.id));
+      this.component.setUser(this.userProxy.findUserByUsername(event.id));
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +44,8 @@ export class UserFormMediator extends Mediator {
 
   private async onSave(event: any) {
     try {
-      this.component.goBack(await this.userProxy.save(event.user));
+      this.userProxy.save(event.user);
+      this.component.goBack();
     } catch (error) {
       console.log(error);
     }
@@ -58,7 +53,8 @@ export class UserFormMediator extends Mediator {
 
   private async onUpdate(event: any) {
     try {
-      this.component.goBack(await this.userProxy.update(event.user));
+      this.userProxy.update(event.user);
+      this.component.goBack(event.user);
     } catch (error) {
       console.log(error);
     }

@@ -13,11 +13,19 @@ import { ApplicationConstants } from "../ApplicationConstants";
 import { ApplicationFacade } from "../ApplicationFacade";
 import { UserProxy } from "../model/UserProxy";
 import { RoleProxy } from "../model/RoleProxy";
+import {UserVO} from "../model/valueObject/UserVO";
+import {DeptEnum} from "../model/enum/DeptEnum";
 
 export class StartupCommand extends SimpleCommand {
 
   execute(notification: INotification) {
-    this.facade.registerProxy(new UserProxy());
+    const userProxy = new UserProxy();
+
+    userProxy.save(new UserVO("lstooge", "Larry", "Stooge", "larry@stooges.com", "ijk456", DeptEnum.ACCT));
+    userProxy.save(new UserVO("cstooge", "Curly", "Stooge", "curly@stooges.com", "xyz987", DeptEnum.SALES));
+    userProxy.save(new UserVO("mstooge", "Moe", "Stooge", "moe@stooges.com", "abc123", DeptEnum.PLANT));
+
+    this.facade.registerProxy(userProxy);
     this.facade.registerProxy(new RoleProxy());
 
     const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);

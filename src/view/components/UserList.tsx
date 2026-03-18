@@ -11,7 +11,7 @@ import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import { User } from "../../model/valueObject/User";
+import { UserVO } from "../../model/valueObject/UserVO";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;
@@ -20,13 +20,13 @@ interface Props {
 
 export interface IUserList {
   DELETE: string,
-  setUsers: (users: User[]) => void
+  setUsers: (users: UserVO[]) => void
 }
 
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
-  const [users, setUsers] = useState<User[]>([]); // User Data
-  const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
+  const [users, setUsers] = useState<UserVO[]>([]); // UserVO Data
+  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
 
   const component: IUserList = useMemo(() => ({
     DELETE: "UserListDelete",
@@ -41,26 +41,28 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
   }, [component]);
 
   useEffect(() => {
-    if (route.params?.user.roles) { // updated user from the User Form
-        setUsers((users: User[]) => {
-          if (users.some(user => user.id === route.params?.user.id))  // existing, update
-            return users.map((user: User) => user.id === route.params?.user.id ? route.params?.user : user)
+    if (route.params?.user) { // updated user from the UserVO Form
+        setUsers((users: UserVO[]) => {
+          if (users.some(user => user.username === route.params?.user.username))  // existing, update
+            return users.map((user: UserVO) => user.username === route.params?.user.username ? route.params?.user : user)
           else
             return [...users, route.params?.user] // add new
         });
+
+      navigation.setParams({ user: undefined });
     }
   }, [route.params?.user]);
 
-  const onPress = (user: User) => {
-    navigation.navigate("UserForm", { user: user });
+  const onPress = (user: UserVO) => {
+    navigation.navigate("UserForm", { user: user, roles: [] });
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <FlatList data={users} keyExtractor={(user: User) => `user_${user.id}`} renderItem={({ item }) => (
+        <FlatList data={users} keyExtractor={(user: UserVO) => `user_${user.username}`} renderItem={({ item }) => (
             <TouchableOpacity onPress={() => onPress(item)}>
-              <Text style={styles.user}>{item.last}, {item.first}</Text>
+              <Text style={styles.item}>{item.last}, {item.first}</Text>
             </TouchableOpacity>
           )}
         />
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  user: {
+  item: {
     padding: 16,
     fontSize: 16,
     fontWeight: "bold",

@@ -12,8 +12,9 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import { User } from "../../model/valueObject/User";
-import { Department } from "../../model/valueObject/Department";
+import { UserVO } from "../../model/valueObject/UserVO";
+import {DeptEnum} from "../../model/enum/DeptEnum";
+import {RoleEnum} from "../../model/enum/RoleEnum";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
@@ -24,70 +25,68 @@ export interface IUserForm {
   USER_FETCH: string,
   USER_SAVE: string,
   USER_UPDATE: string,
-  setUser: (user: User) => void,
-  setDepartments: (departments: Department[]) => void,
-  goBack: (u: User) => void
+  setUser: (user: UserVO) => void,
+  goBack: (user: UserVO) => void
 }
 
 const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
-  const [departments, setDepartments] = useState<Department[]>([]); // Application Data
-  const [user, setUser] = useState<User>(new User()); // User Data
-  const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
+  const [user, setUser] = useState<UserVO>(new UserVO()); // UserVO Data
+  const [roles, setRoles] = useState<RoleEnum[]>([]);
+  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
 
   const component: IUserForm = useMemo(() => ({
     USER_FETCH: "UserFormFetch",
     USER_SAVE: "UserFormSave",
     USER_UPDATE: "UserFormUpdate",
     setUser: setUser,
-    setDepartments: setDepartments,
-    goBack: (u: User) => {
-      navigation.navigate("UserList", { user: u })
+    goBack: (u: UserVO) => {
+      navigation.navigate("UserList", {user: u})
     }
-  }), [setUser, setDepartments]);
+  }), [navigation, setUser]);
 
   useEffect(() => { // mount
     emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, component);
-    if (route.params?.user.id) { // fetch user - if id is passed from UserList
-      emitter.emit(component.USER_FETCH, { id: route.params?.user.id });
+    if (route.params?.user.username) { // fetch user - if username is passed from UserList
+      emitter.emit(component.USER_FETCH, { id: route.params?.user.username });
     }
     return () => {
       emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
     }
   }, [component]);
 
-  // set roles if roles are passed from User Role
-  useEffect(() => {
-    if (route.params?.user.roles) { // (race condition)
-      setUser((state: User) => (
-        {...state, roles: route.params?.user.roles}
-      ));
-    }
-    return () => {}
-  }, [route.params]);
+  // set roles if roles are passed from UserVO RoleVO
+  // useEffect(() => {
+  //   if (route.params?.user.roles) { // (race condition)
+  //     setUser((state: UserVO) => (
+  //       {...state, roles: route.params?.user.roles}
+  //     ));
+  //   }
+  //   return () => {}
+  // }, [route.params]);
 
   // text fields change handler
-  const onChange = (field: keyof User, value: string) => {
-    setUser((state: User) => (
-      { ...state, [field]: value } as User
+  const onChange = (field: keyof UserVO, value: string) => {
+    setUser((state: UserVO) => (
+      { ...state, [field]: value } as UserVO
     ));
   }
 
   // department value change handler
   const onValueChange = (value: number, index: number) => {
-    setUser((state: User) => (
-      { ...state, department: value === 0 ? Department.NONE_SELECTED : departments.find(d => d.id === value)} as User
+    setUser((state: UserVO) => (
+      { ...state, department: value === 0 ? DeptEnum.NONE_SELECTED : DeptEnum.combo.find(d => d.ordinal === value)} as UserVO
     ));
   }
 
   // roles press handler
   const onRoles = (event: any) => {
-    navigation.navigate("UserRole", { user: user });
+    navigation.navigate("UserRole", { user: user, roles: roles });
   }
 
   // save press handler
   const onSave = (event: any) => {
-    emitter.emit(user.id === 0 ? component.USER_SAVE : component.USER_UPDATE, {user: user});
+    emitter.emit(user.username === "" ? component.USER_SAVE : component.USER_UPDATE, {user: user});
   }
 
   // cancel press handler
@@ -103,17 +102,16 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
       </View>
       <View style={styles.row}>
         <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("email", value)} keyboardType="email-address" />
-        <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} />
+        <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} editable={!route.params?.user.username}/>
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={(value) => setUser( ({...user, password: value } as User) )} />
-        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => setUser( ({...user, confirm: value } as User) )} />
+        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={(value) => setUser( ({...user, password: value } as UserVO) )} />
+        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => setUser( ({...user, confirm: value } as UserVO) )} />
       </View>
       <View style={styles.row}>
-        <Picker style={styles.input} selectedValue={user.department?.id} onValueChange={onValueChange}>
-          <Picker.Item label="---None Selected---" value="{0}" />
-          {departments?.map((department) => (
-            <Picker.Item key={department.key} label={department.name} value={department.id} />
+        <Picker style={styles.input} selectedValue={user.department?.ordinal} onValueChange={onValueChange}>
+          {DeptEnum.combo.map((department) => (
+            <Picker.Item key={department.ordinal.toString()} label={department.value} value={department.ordinal} />
           ))}
         </Picker>
         <TouchableOpacity style={[styles.button, styles.roles]} onPress={onRoles}>
@@ -125,7 +123,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
           <Text style={styles.buttonText}>CANCEL</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.save]} onPress={onSave}>
-          <Text style={styles.buttonText}>{route.params?.user.id ? "UPDATE" : "SAVE"}</Text>
+          <Text style={styles.buttonText}>{route.params?.user.username ? "UPDATE" : "SAVE"}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

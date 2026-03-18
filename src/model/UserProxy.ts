@@ -7,79 +7,32 @@
 //
 
 import { Proxy } from "@puremvc/puremvc-typescript-multicore-framework";
-import { User } from "./valueObject/User";
-import { Department } from "./valueObject/Department";
-import { ApplicationConstants } from "../ApplicationConstants";
+import { UserVO } from "./valueObject/UserVO";
 
 export class UserProxy extends Proxy {
 
   public static NAME = "UserProxy";
 
   constructor() {
-    super(UserProxy.NAME, null);
+    super(UserProxy.NAME, []);
   }
 
-  public async findAllUsers(): Promise<User[]> {
-    const response = await fetch(`${ApplicationConstants.API_URL}/users`, {method: "GET"});
-    if (response.status === 200) {
-      const json = await response.json();
-      return json.map((user: User) => new User(user.id, "", user.first, user.last));
-    } else {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+  public findAllUsers(): UserVO[] {
+    return this.data;
   }
 
-  public async findUserById(id: number): Promise<User> {
-    const response = await fetch(`${ApplicationConstants.API_URL}/users/${id}`, {method: "GET"});
-    if (response.status === 200) {
-      const json = await response.json();
-      return User.fromJson(json);
-    } else {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+  public findUserByUsername(username: string): UserVO {
+    return this.data.find((user: UserVO) => user.username === username);
   }
 
-  async save(user: User) {
-    const response = await fetch(`${ApplicationConstants.API_URL}/users`, { method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(user)
-    });
-
-    if (response.status === 201) {
-      const json = await response.json();
-      return User.fromJson(json);
-    } else {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+  public save(user: UserVO) {
+    this.data.push(user);
   }
 
-  async update(user: User) {
-    const response = await fetch(`${ApplicationConstants.API_URL}/users/${user.id}`, { method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(user)
-    });
-
-    if (response.status === 200) {
-      const json = await response.json();
-      return User.fromJson(json);
-    } else {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
-  }
-
-  public async findAllDepartments(): Promise<Department[]> {
-    const response = await fetch(`${ApplicationConstants.API_URL}/departments`, {method: "GET"});
-    if (response.status === 200) {
-      const json = await response.json();
-      return json.map((department: Department) => Department.fromJson(department));
-    } else {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+  public update(user: UserVO) {
+    const index = this.data.findIndex((user: UserVO) => user.username === user.username);
+    if (index !== -1)
+      this.data[index] = user;
   }
 
 }
