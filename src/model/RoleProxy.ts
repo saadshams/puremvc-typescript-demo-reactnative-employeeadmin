@@ -8,7 +8,7 @@
 
 import { Proxy } from "@puremvc/puremvc-typescript-multicore-framework";
 import { RoleVO } from "./valueObject/RoleVO";
-import {RoleEnum} from "./enum/RoleEnum";
+import { RoleEnum } from "./enum/RoleEnum";
 
 export class RoleProxy extends Proxy {
 
