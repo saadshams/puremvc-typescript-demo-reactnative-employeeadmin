@@ -33,7 +33,8 @@ export class UserRoleMediator extends Mediator {
 
   private async onSelect(event: any) {
     try {
-      this.component.setData(await this.roleProxy.findRolesById(event.id));
+      const roles = this.roleProxy.findRolesByUsername(event.id);
+      if (roles != null) this.component.setData(roles);
     } catch(error) {
       console.log(error);
     }

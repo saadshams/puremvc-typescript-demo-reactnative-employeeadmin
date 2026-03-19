@@ -41,7 +41,7 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
   }, [component]);
 
   useEffect(() => {
-    if (route.params?.user) { // updated user from the UserVO Form
+    if (route.params?.user) { // updated user from the UserForm
         setUsers((users: UserVO[]) => {
           if (users.some(user => user.username === route.params?.user.username))  // existing, update
             return users.map((user: UserVO) => user.username === route.params?.user.username ? route.params?.user : user)

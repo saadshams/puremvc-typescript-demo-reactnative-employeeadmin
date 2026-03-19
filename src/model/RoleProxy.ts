@@ -22,17 +22,17 @@ export class RoleProxy extends Proxy {
     return this.data;
   }
 
-  public findRolesByUsername(username: string): RoleVO {
-    return this.data.find((role: RoleVO) => role.username === username);
+  public findRolesByUsername(username: string): RoleEnum[] | null {
+    const index = this.data.findIndex((role: RoleVO) => role.username === username);
+    return (index >= 0) ? (this.data[index] as RoleVO).roles : null;
   }
 
   public save(role: RoleVO) {
     this.data.push(role);
   }
 
-  public updateRolesByUsername(username: string, roles: [RoleEnum]) {
+  public updateRolesByUsername(username: string, roles: [RoleEnum]): RoleEnum[] | null {
     const index = this.data.findIndex((role: RoleVO) => role.username === username);
-    if (index >= 0)
-      (this.data[index] as RoleVO).roles = roles;
+    return (index >= 0) ? (this.data[index] as RoleVO).roles : null;
   }
 }
