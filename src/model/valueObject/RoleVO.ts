@@ -11,7 +11,7 @@ import { RoleEnum } from "../enum/RoleEnum";
 export class RoleVO {
 
   public readonly username: string;
-  public readonly roles: RoleEnum[];
+  public roles: RoleEnum[];
 
   constructor(username: string, roles: RoleEnum[]) {
     this.username = username;
