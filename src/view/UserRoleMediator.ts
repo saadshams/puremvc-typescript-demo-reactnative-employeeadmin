@@ -25,13 +25,6 @@ export class UserRoleMediator extends Mediator {
 
   public async onRegister() {
     this.listeners.push(this.emitter.addListener(this.component.USER_ROLE_FETCH, event => this.onSelect(event)));
-
-    this.roleProxy = this.facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
-    try {
-      this.component.setRoles(await this.roleProxy.findAllRoles());
-    } catch(error) {
-      console.log(error);
-    }
   }
 
   public onRemove() {
@@ -40,7 +33,8 @@ export class UserRoleMediator extends Mediator {
 
   private async onSelect(event: any) {
     try {
-      this.component.setData(await this.roleProxy.findRolesById(event.id));
+      const roles = this.roleProxy.findRolesByUsername(event.id);
+      if (roles != null) this.component.setData(roles);
     } catch(error) {
       console.log(error);
     }

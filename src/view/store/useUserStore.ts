@@ -7,22 +7,39 @@
 //
 
 import { create } from "zustand";
-import { User } from "../../model/valueObject/User";
+import { UserVO } from "../../model/valueObject/UserVO";
+
+function cloneUserVO(user: UserVO): UserVO {
+  const copy = new UserVO(
+    user.id,
+    user.username,
+    user.first,
+    user.last,
+    user.email,
+    user.password,
+    user.department,
+    [...user.roles],
+  );
+  copy.confirm = user.confirm;
+  return copy;
+}
 
 type UserState = {
-  users: User[];
-  upsertUser: (user: User) => void;
+  users: UserVO[];
+  setUsers: (users: UserVO[]) => void;
+  upsertUser: (user: UserVO) => void;
 };
 
 const useUserStore = create<UserState>((set) => ({
   users: [],
+  setUsers: (users) => set({ users: users.map(cloneUserVO) }),
   upsertUser: (user) =>
     set((state) => {
       const resolved =
         user.id === 0
           ? (() => {
               const nextId = state.users.reduce((max, u) => Math.max(max, u.id), 0) + 1;
-              const created = new User(
+              const created = new UserVO(
                 nextId,
                 user.username,
                 user.first,
@@ -30,12 +47,12 @@ const useUserStore = create<UserState>((set) => ({
                 user.email,
                 user.password,
                 user.department,
-                user.roles,
+                [...user.roles],
               );
               created.confirm = user.confirm;
               return created;
             })()
-          : user;
+          : cloneUserVO(user);
       const index = state.users.findIndex((u) => u.id === resolved.id);
       if (index >= 0) {
         const next = [...state.users];

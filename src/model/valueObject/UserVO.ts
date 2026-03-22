@@ -1,26 +1,35 @@
 //
-//  User.ts
+//  UserVO.ts
 //  PureMVC TypeScript Demo - React Native EmployeeAdmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import { Department } from "./Department";
-import { Role } from "./Role";
+import { DeptEnum } from "../enum/DeptEnum";
+import { RoleEnum } from "../enum/RoleEnum";
 
-export class User {
-  public readonly id: number;
+export class UserVO {
+  public id: number;
   public username: string;
   public first: string;
   public last: string;
   public email: string;
   public password: string;
   public confirm: string = "";
-  public department: Department;
-  public roles: Role[];
+  public department: DeptEnum;
+  public roles: RoleEnum[];
 
-  constructor(id = 0, username = "", first = "", last = "", email = "", password = "", department = Department.NONE_SELECTED, roles: Role[] = []) {
+  constructor(
+    id = 0,
+    username = "",
+    first = "",
+    last = "",
+    email = "",
+    password = "",
+    department = DeptEnum.NONE_SELECTED,
+    roles: RoleEnum[] = [],
+  ) {
     this.id = id;
     this.username = username;
     this.first = first;
@@ -35,10 +44,4 @@ export class User {
   static validate(confirm: string): boolean {
     return false;
   }
-
-  static fromJson({id, username, first, last, email, password, department, roles}: User) {
-    return new User(id, username, first, last, email, password, Department.fromJson(department), roles.map(r => r)); // ...[roles].map(r => r)
-  }
-
-  // public get key(): string { return `user_${this.id}` };
 }

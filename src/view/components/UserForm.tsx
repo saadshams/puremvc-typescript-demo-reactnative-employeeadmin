@@ -12,17 +12,9 @@ import { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Picker } from "@react-native-picker/picker";
 import { ParamList } from "../../ApplicationConstants";
-import { User } from "../../model/valueObject/User";
-import { Department } from "../../model/valueObject/Department";
+import { UserVO } from "../../model/valueObject/UserVO";
+import { DeptEnum } from "../../model/enum/DeptEnum";
 import useUserStore from "../store/useUserStore";
-
-/** Local department options (no API / proxy). */
-const FORM_DEPARTMENTS: Department[] = [
-  Department.NONE_SELECTED,
-  new Department(1, "Accounting"),
-  new Department(2, "Sales"),
-  new Department(3, "Engineering"),
-];
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, "UserForm">;
@@ -31,28 +23,28 @@ interface Props {
 
 const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
-  const [user, setUser] = useState<User>(() => route.params.user);
+  const [user, setUser] = useState<UserVO>(() => route.params.user);
 
   useEffect(() => {
     setUser(route.params.user);
   }, [route.params.user]);
 
   useEffect(() => {
-    const { roles } = route.params.user;
+    const { roles } = route.params;
     if (roles !== undefined) {
-      setUser((state) => ({ ...state, roles }));
+      setUser((state) => ({ ...state, roles: [...roles] }));
     }
-  }, [route.params.user.roles]);
+  }, [route.params.roles]);
 
-  const onChange = (field: keyof User, value: string) => {
-    setUser((state) => ({ ...state, [field]: value } as User));
+  const onChange = (field: keyof UserVO, value: string) => {
+    setUser((state) => ({ ...state, [field]: value } as UserVO));
   };
 
-  const onValueChange = (value: number) => {
-    setUser((state) => ({
-      ...state,
-      department: value === 0 ? Department.NONE_SELECTED : FORM_DEPARTMENTS.find((d) => d.id === value) ?? Department.NONE_SELECTED,
-    } as User));
+  const onDeptChange = (raw: string | number) => {
+    const ord = typeof raw === "number" ? raw : parseInt(String(raw), 10);
+    const department =
+      DeptEnum.combo.find((d) => d.ordinal === ord) ?? DeptEnum.NONE_SELECTED;
+    setUser((state) => ({ ...state, department } as UserVO));
   };
 
   const onRoles = () => {
@@ -61,7 +53,7 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
   const onSave = () => {
     useUserStore.getState().upsertUser(user);
-    navigation.navigate("UserList", {});
+    navigation.navigate("UserList");
   };
 
   const onCancel = () => {
@@ -79,14 +71,13 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
         <TextInput style={styles.input} placeholder="Username" value={user.username} onChangeText={(value) => onChange("username", value)} />
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Password" value={user.password} onChangeText={(value) => setUser(({ ...user, password: value } as User))} />
-        <TextInput style={styles.input} placeholder="Confirm" value={user.confirm} onChangeText={(value) => setUser(({ ...user, confirm: value } as User))} />
+        <TextInput style={styles.input} placeholder="Password" value={user.password} onChangeText={(value) => setUser(({ ...user, password: value } as UserVO))} />
+        <TextInput style={styles.input} placeholder="Confirm" value={user.confirm} onChangeText={(value) => setUser(({ ...user, confirm: value } as UserVO))} />
       </View>
       <View style={styles.row}>
-        <Picker style={styles.input} selectedValue={user.department?.id} onValueChange={onValueChange}>
-          <Picker.Item label="---None Selected---" value="{0}" />
-          {FORM_DEPARTMENTS.map((department) => (
-            <Picker.Item key={department.key} label={department.name} value={department.id} />
+        <Picker style={styles.input} selectedValue={user.department.ordinal} onValueChange={onDeptChange}>
+          {DeptEnum.combo.map((department) => (
+            <Picker.Item key={department.ordinal} label={department.value} value={department.ordinal} />
           ))}
         </Picker>
         <TouchableOpacity style={[styles.button, styles.roles]} onPress={onRoles}>
@@ -103,7 +94,7 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
       </View>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -132,7 +123,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: 18,
-    textAlign: "center"
+    textAlign: "center",
   },
   cancel: {
     backgroundColor: "#D32F2F",

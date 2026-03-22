@@ -7,7 +7,8 @@
 //
 
 import { Platform } from "react-native";
-import { User } from "./model/valueObject/User";
+import { UserVO } from "./model/valueObject/UserVO";
+import type { RoleEnum } from "./model/enum/RoleEnum";
 
 export class ApplicationConstants {
   static USER_LIST_MOUNTED = "userListMounted";
@@ -22,7 +23,7 @@ export class ApplicationConstants {
 }
 
 export type ParamList = {
-  UserList: {user: User};
-  UserForm: {user: User};
-  UserRole: {user: User};
+  UserList: undefined;
+  UserForm: {user: UserVO, roles: RoleEnum[]};
+  UserRole: {user: UserVO};
 };
