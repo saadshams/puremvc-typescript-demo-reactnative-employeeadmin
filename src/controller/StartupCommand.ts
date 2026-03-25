@@ -22,11 +22,6 @@ export class StartupCommand extends SimpleCommand {
 
   execute(notification: INotification) {
     const userProxy = new UserProxy();
-
-    userProxy.save(new UserVO("lstooge", "Larry", "Stooge", "larry@stooges.com", "ijk456", DeptEnum.ACCT));
-    userProxy.save(new UserVO("cstooge", "Curly", "Stooge", "curly@stooges.com", "xyz987", DeptEnum.SALES));
-    userProxy.save(new UserVO("mstooge", "Moe", "Stooge", "moe@stooges.com", "abc123", DeptEnum.PLANT));
-
     const roleProxy = new RoleProxy();
 
     roleProxy.save(new RoleVO("lstooge", [RoleEnum.PAYROLL, RoleEnum.EMP_BENEFITS]));
