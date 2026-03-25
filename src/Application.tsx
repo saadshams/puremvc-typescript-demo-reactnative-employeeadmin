@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { ParamList } from "./ApplicationConstants";
 import { ApplicationFacade } from "./ApplicationFacade";
@@ -20,27 +21,31 @@ import UserForm from "./view/components/UserForm";
 import UserRole from "./view/components/UserRole";
 
 ApplicationFacade
-    .getInstance(ApplicationFacade.KEY, key => new ApplicationFacade(key))
-    .startup();
+  .getInstance(ApplicationFacade.KEY, key => new ApplicationFacade(key))
+  .startup();
 
 const Application: React.FC = () => {
 
   const Stack = createNativeStackNavigator<ParamList>();
+  const queryClient = new QueryClient()
+
 
   return (
-    <NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
         <Stack.Navigator initialRouteName="UserList">
-          <Stack.Screen name="UserList" component={UserList} options={({navigation}) => ({
+          <Stack.Screen name="UserList" component={UserList} options={({ navigation }) => ({
             title: "UserVO List",
             headerRight: () => (
               <TouchableOpacity onPress={() => { navigation.navigate("UserForm", { user: new UserVO() }) }}>
                 <Text><Icon name="plus" size={24} color="#007AFF" /></Text>
               </TouchableOpacity>)
           })} />
-          <Stack.Screen name="UserForm" component={UserForm} options={{title: "UserVO Form"}} />
-          <Stack.Screen name="UserRole" component={UserRole} options={{title: "UserVO RoleVO"}} />
+          <Stack.Screen name="UserForm" component={UserForm} options={{ title: "UserVO Form" }} />
+          <Stack.Screen name="UserRole" component={UserRole} options={{ title: "UserVO RoleVO" }} />
         </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 
