@@ -18,7 +18,7 @@ export class ApplicationConstants {
   static USER_FORM_UNMOUNTED = "userFormUnmounted";
   static USER_ROLE_UNMOUNTED = "userRoleUnmounted";
 
-  static API_URL = Platform.OS === "android" ? "http://10.0.2.2" : "http://127.0.0.1";
+  static API_URL = Platform.OS === "android" ? "http://192.168.1.110" : "http://127.0.0.1";
 }
 
 export type ParamList = {

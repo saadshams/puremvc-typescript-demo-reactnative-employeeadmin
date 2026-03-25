@@ -6,12 +6,14 @@
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setUserById, setUsers } from "../../store/usersSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;
@@ -25,13 +27,17 @@ export interface IUserList {
 
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
-  const [users, setUsers] = useState<User[]>([]); // User Data
+  const dispatch = useAppDispatch();
+  const users = useAppSelector(state => state.users.list);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserList = useMemo(() => ({
     DELETE: "UserListDelete",
-    setUsers: setUsers,
-  }), [setUsers]);
+    setUsers: (incomingUsers: User[]) => {
+      const cleanUsers = incomingUsers.map(u => JSON.parse(JSON.stringify(u)));
+      return dispatch(setUsers(cleanUsers));
+    },
+  }), [dispatch]);
 
   useEffect(() => {
     emitter.emit(ApplicationConstants.USER_LIST_MOUNTED, component);
@@ -42,14 +48,9 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (route.params?.user.roles) { // updated user from the User Form
-        setUsers((users: User[]) => {
-          if (users.some(user => user.id === route.params?.user.id))  // existing, update
-            return users.map((user: User) => user.id === route.params?.user.id ? route.params?.user : user)
-          else
-            return [...users, route.params?.user] // add new
-        });
+      dispatch(setUserById(route.params.user));
     }
-  }, [route.params?.user]);
+  }, [dispatch, route.params?.user]);
 
   const onPress = (user: User) => {
     navigation.navigate("UserForm", { user: user });
@@ -59,10 +60,10 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <FlatList data={users} keyExtractor={(user: User) => `user_${user.id}`} renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => onPress(item)}>
-              <Text style={styles.user}>{item.last}, {item.first}</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={() => onPress(item)}>
+            <Text style={styles.user}>{item.last}, {item.first}</Text>
+          </TouchableOpacity>
+        )}
         />
       </View>
     </SafeAreaView>

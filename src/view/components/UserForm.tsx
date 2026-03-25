@@ -14,6 +14,9 @@ import { Picker } from "@react-native-picker/picker";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
+import { Role } from "../../model/valueObject/Role";
+import { useAppDispatch } from "../../store/hooks";
+import { setUserById } from "../../store/usersSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
@@ -29,10 +32,11 @@ export interface IUserForm {
   goBack: (u: User) => void
 }
 
-const UserForm: React.FC<Props> = ( {navigation, route} ) => {
+const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
   const [departments, setDepartments] = useState<Department[]>([]); // Application Data
   const [user, setUser] = useState<User>(new User()); // User Data
+  const dispatch = useAppDispatch();
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserForm = useMemo(() => ({
@@ -42,9 +46,30 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
     setUser: setUser,
     setDepartments: setDepartments,
     goBack: (u: User) => {
-      navigation.navigate("UserList", { user: u })
+      const cleanUser: User = {
+        id: u.id,
+        first: u.first,
+        last: u.last,
+        email: u.email,
+        username: u.username,
+        password: u.password,
+        confirm: u.confirm,
+        department: {
+          id: u.department.id,
+          name: u.department.name,
+          key: u.department.key,
+        },
+        roles: u.roles?.map(r => ({
+          id: r.id,
+          name: r.name,
+          key: r.key,
+        })) ?? [],
+      };
+  
+      dispatch(setUserById(cleanUser));
+      navigation.navigate("UserList", { user: cleanUser });
     }
-  }), [setUser, setDepartments]);
+  }), [dispatch, navigation]);
 
   useEffect(() => { // mount
     emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, component);
@@ -54,7 +79,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
     return () => {
       emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
     }
-  }, [component]);
+  }, [component, route.params?.user.id]);
 
   // set roles if roles are passed from User Role
   useEffect(() => {
