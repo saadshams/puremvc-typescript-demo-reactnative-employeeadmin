@@ -1,80 +1,61 @@
-//
-//  UserList.tsx
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
-//
-//  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
-//  Your reuse is governed by the BSD 3-Clause License
-//
-
-import React, { useEffect } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList } from "../../ApplicationConstants";
-import { ApplicationFacade } from "../../ApplicationFacade";
-import { RoleProxy } from "../../model/RoleProxy";
-import { UserProxy } from "../../model/UserProxy";
+import { useUsers } from "../../api/users/users.hooks";
+import { User } from "../../api/users/users.types";
+import { useNavigation } from "@react-navigation/native";
 import { UserVO } from "../../model/valueObject/UserVO";
-import useUserStore from "../store/useUserStore";
 
-interface Props {
-  navigation: NativeStackNavigationProp<ParamList, "UserList">;
+export interface IUserList {
+  setUsers: (users: UserVO[]) => void;
 }
 
-const UserList: React.FC<Props> = ({ navigation }) => {
+const RenderUser = ({ item }: { item: User }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<ParamList, "UserList">>();
 
-  const users = useUserStore((state) => state.users);
+  const onPress = useCallback((user: User) => {
+    navigation.navigate("UserForm", {
+      user,
+      roleIds: user.roles.map((r) => r.id),
+      departmentId: user.department?.id,
+    });
+  }, [navigation]);
 
-  useEffect(() => {
-    const { users: current, setUsers } = useUserStore.getState();
-    if (current.length > 0) {
-      return;
-    }
-    try {
-      const facade = ApplicationFacade.getInstance(
-        ApplicationFacade.KEY,
-        (key) => new ApplicationFacade(key),
-      );
-      const userProxy = facade.retrieveProxy(UserProxy.NAME) as UserProxy;
-      const roleProxy = facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
-      const merged = userProxy.findAllUsers().map((u) => {
-        const roles = roleProxy.findRolesByUsername(u.username) ?? [];
-        const row = new UserVO(
-          u.id,
-          u.username,
-          u.first,
-          u.last,
-          u.email,
-          u.password,
-          u.department,
-          roles,
-        );
-        row.confirm = u.confirm ?? u.password;
-        return row;
-      });
-      setUsers(merged);
-    } catch {
-      /* startup / proxy not registered yet */
-    }
-  }, []);
+  return (
+    <TouchableOpacity style={styles.item} onPress={() => onPress(item)}>
+      <Text style={styles.name}>
+        {item.last}, {item.first}
+      </Text>
+      <Text style={styles.email}>{item.email}</Text>
+    </TouchableOpacity>
+  )
+}
 
-  const onPress = (item: UserVO) => {
-    navigation.navigate("UserForm", { user: item });
-  };
+const UserList: React.FC = () => {
+  const { data, isLoading, error } = useUsers();
+
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text>Error loading users</Text>;
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <FlatList
-          data={users}
-          keyExtractor={(item) => `user_${item.id}`}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => onPress(item)}>
-              <Text style={styles.item}>{item.last}, {item.first}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-    </SafeAreaView>
+      <FlatList
+        data={data ?? []}
+        keyExtractor={(item) => item.id.toString()}
+        removeClippedSubviews={false}
+        renderItem={({ item }) => <RenderUser item={item} />}
+        ListEmptyComponent={<Text>No users found</Text>}
+      />
+    </SafeAreaView >
   );
 };
 
@@ -84,10 +65,16 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 16,
-    fontSize: 16,
-    fontWeight: "bold",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  email: {
+    fontSize: 14,
+    color: "#666",
   },
 });
 
