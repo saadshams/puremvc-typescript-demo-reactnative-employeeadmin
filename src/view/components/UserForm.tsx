@@ -128,6 +128,7 @@ const toUpdatePayload = (form: FormState, departments: Department[], roles: Role
     .filter((r): r is Role => r !== undefined);
 
   const payload: UpdateUserPayload = {
+    id: form.id,
     username: form.username,
     first: form.first,
     last: form.last,
