@@ -7,12 +7,12 @@
 //
 
 import React, { useEffect, useMemo, useState } from "react";
-import { NativeEventEmitter, NativeModules, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
-import { RoleEnum } from "../../model/enum/RoleEnum";
+import { ParamList } from "../../ApplicationConstants";
+import { useRoles } from "../../api/roles/roles.hooks";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;
@@ -21,43 +21,30 @@ interface Props {
 
 export interface IUserRole {
   USER_ROLE_FETCH: string;
-  setData: (data: RoleEnum[]) => void;
+  setData: (data: any[]) => void;
 }
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
-  const [data, setData] = useState<RoleEnum[]>([]); // UserVO Data
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
-
-  const component: IUserRole = useMemo(() => ({
-    USER_ROLE_FETCH: "UserRoleFetch",
-    setData: setData
-  }), [setData]);
+  const { data: roles = [], isLoading, error } = useRoles();
+  const [selectedRoleIds, setSelectedRoleIds] = useState<number[]>(() => route.params?.roleIds ?? []);
 
   useEffect(() => {
-    emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, component);
-    if (route.params?.user.username)
-      emitter.emit(component.USER_ROLE_FETCH, {id: route.params?.user.username});
+    // keep selected role ids in sync if route param changes
+    if (route.params?.roleIds) setSelectedRoleIds(route.params.roleIds);
+  }, [route.params?.roleIds]);
 
-    return () => {
-      emitter.emit(ApplicationConstants.USER_ROLE_UNMOUNTED);
-    }
-  }, [component]);
-
-  const onChange = (role: RoleEnum) => {
-    setData((state) => {
-      if (state.some(r => r.ordinal === role.ordinal)) {
-        return state.filter(r => r.ordinal !== role.ordinal); // Remove
-      } else {
-        return [...state, role]; // Add
-      }
+  const onChange = (roleId: number) => {
+    setSelectedRoleIds((state) => {
+      if (state.includes(roleId)) return state.filter((id) => id !== roleId);
+      return [...state, roleId];
     });
   }
 
   const onSave = () => {
     navigation.navigate("UserForm", {
       user: route.params?.user,
-      roles: data
+      roleIds: selectedRoleIds
     });
   }
 
@@ -65,13 +52,16 @@ const UserRole: React.FC<Props> = ({ navigation, route }) => {
     navigation.goBack();
   }
 
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text>Error loading roles</Text>;
+
   return(
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {RoleEnum.combo.map((role: RoleEnum) => (
-          <View key={`role_${role.ordinal}`} style={styles.item}>
-            <CheckBox title={role.value} containerStyle={styles.checkbox}
-                      checked={data.some(r => r.ordinal === role.ordinal)} onPress={() => onChange(role)}
+        {roles.map((role) => (
+          <View key={`role_${role.id}`} style={styles.item}>
+            <CheckBox title={role.name} containerStyle={styles.checkbox}
+                      checked={selectedRoleIds.includes(role.id)} onPress={() => onChange(role.id)}
                       iconType="material-community" checkedIcon="checkbox-outline" uncheckedIcon={"checkbox-blank-outline"} />
           </View>
         ))}
