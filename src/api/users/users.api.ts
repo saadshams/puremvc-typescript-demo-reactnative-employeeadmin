@@ -2,7 +2,7 @@ import { apiClient } from '../client';
 import { BASE_URL, ENDPOINTS } from '../endpoints';
 import { User } from './users.types';
 
-type UserInputBase = Omit<User, 'id' | 'password'>;
+type UserInputBase = Omit<User, 'password'>;
 export type CreateUserPayload = UserInputBase & { password: string };
 export type UpdateUserPayload = UserInputBase & Partial<Pick<User, 'password'>>;
 
