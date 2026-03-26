@@ -13,6 +13,8 @@ import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { Role } from "../../model/valueObject/Role";
+import { useAppDispatch, useAppSelector } from "../../model/store/hooks";
+import { setRoles } from "../../model/store/rolesSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;
@@ -27,15 +29,23 @@ export interface IUserRole {
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
-  const [roles, setRoles] = useState<Role[]>(); // Application Data
+  const dispatch = useAppDispatch();
+  const roles = useAppSelector(state => state.roles.list); // Application Data (global state)
   const [data, setData] = useState<Role[]>([]); // User Data
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserRole = useMemo(() => ({
     USER_ROLE_FETCH: "UserRoleFetch",
-    setRoles: setRoles,
+    setRoles: (incomingRoles: Role[]) => {
+      const cleanRoles = incomingRoles.map(r => ({
+        id: r.id,
+        name: r.name,
+        key: r.key,
+      }));
+      dispatch(setRoles(cleanRoles));
+    },
     setData: setData
-  }), [setRoles, setData]);
+  }), [dispatch, setData]);
 
   useEffect(() => {
     emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, component);
