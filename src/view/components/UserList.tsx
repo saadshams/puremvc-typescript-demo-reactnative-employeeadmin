@@ -12,8 +12,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setUserById, setUsers } from "../../store/usersSlice";
+import { useAppDispatch, useAppSelector } from "../../model/store/hooks";
+import { setUserById, setUsers } from "../../model/store/usersSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;
