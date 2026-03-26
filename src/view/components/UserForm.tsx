@@ -15,8 +15,9 @@ import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
 import { Role } from "../../model/valueObject/Role";
-import { useAppDispatch } from "../../store/hooks";
-import { setUserById } from "../../store/usersSlice";
+import { useAppDispatch, useAppSelector } from "../../model/store/hooks";
+import { setUserById } from "../../model/store/usersSlice";
+import { setDepartments } from "../../model/store/departmentsSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
@@ -34,9 +35,9 @@ export interface IUserForm {
 
 const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
-  const [departments, setDepartments] = useState<Department[]>([]); // Application Data
   const [user, setUser] = useState<User>(new User()); // User Data
   const dispatch = useAppDispatch();
+  const departments = useAppSelector(state => state.departments.list);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserForm = useMemo(() => ({
@@ -44,7 +45,15 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
     USER_SAVE: "UserFormSave",
     USER_UPDATE: "UserFormUpdate",
     setUser: setUser,
-    setDepartments: setDepartments,
+    setDepartments: (incomingDepartments: Department[]) => {
+      const cleanDepartments = incomingDepartments.map(d => ({
+        id: d.id,
+        name: d.name,
+        key: d.key,
+      }));
+    
+      dispatch(setDepartments(cleanDepartments));
+    },
     goBack: (u: User) => {
       const cleanUser: User = {
         id: u.id,
