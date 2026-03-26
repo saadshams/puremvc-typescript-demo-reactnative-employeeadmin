@@ -13,6 +13,7 @@ import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { Role } from "../../model/valueObject/Role";
+import useRolesStore from "../../store/useRolesStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;
@@ -27,8 +28,9 @@ export interface IUserRole {
 
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
-  const [roles, setRoles] = useState<Role[]>(); // Application Data
-  const [data, setData] = useState<Role[]>([]); // User Data
+  const roles = useRolesStore((state) => state.roles);
+  const setRoles = useRolesStore((state) => state.setRoles);
+  const [data, setData] = useState<Role[]>([]);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserRole = useMemo(() => ({

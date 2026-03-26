@@ -6,12 +6,13 @@
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
+import useUsersStore from "../../store/useUsersStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;
@@ -25,7 +26,8 @@ export interface IUserList {
 
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
-  const [users, setUsers] = useState<User[]>([]); // User Data
+  const users = useUsersStore((state) => state.users);
+  const setUsers = useUsersStore((state) => state.setUsers);
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserList = useMemo(() => ({
@@ -42,12 +44,11 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (route.params?.user.roles) { // updated user from the User Form
-        setUsers((users: User[]) => {
-          if (users.some(user => user.id === route.params?.user.id))  // existing, update
-            return users.map((user: User) => user.id === route.params?.user.id ? route.params?.user : user)
-          else
-            return [...users, route.params?.user] // add new
-        });
+      setUsers(
+        users.some(user => user.id === route.params?.user.id) ?
+          users.map((user: User) => user.id === route.params?.user.id ? route.params?.user : user)
+          : [...users, route.params?.user] // add new
+      );
     }
   }, [route.params?.user]);
 

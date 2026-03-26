@@ -14,6 +14,8 @@ import { Picker } from "@react-native-picker/picker";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
+import useUsersStore from "../../store/useUsersStore";
+import useDepartmentsStore from "../../store/useDepartmentsStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
@@ -29,10 +31,13 @@ export interface IUserForm {
   goBack: (u: User) => void
 }
 
-const UserForm: React.FC<Props> = ( {navigation, route} ) => {
+const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
-  const [departments, setDepartments] = useState<Department[]>([]); // Application Data
-  const [user, setUser] = useState<User>(new User()); // User Data
+  const users = useUsersStore((state) => state.users);
+  const setUsers = useUsersStore((state) => state.setUsers);
+  const departments = useDepartmentsStore((state) => state.departments);
+  const setDepartments = useDepartmentsStore((state) => state.setDepartments);
+  const [user, setUser] = useState<User>(new User());
   const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
 
   const component: IUserForm = useMemo(() => ({
@@ -42,9 +47,14 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
     setUser: setUser,
     setDepartments: setDepartments,
     goBack: (u: User) => {
+      setUsers(
+        users.some((existingUser) => existingUser.id === u.id)
+          ? users.map((existingUser) => (existingUser.id === u.id ? u : existingUser))
+          : [...users, u]
+      );
       navigation.navigate("UserList", { user: u })
     }
-  }), [setUser, setDepartments]);
+  }), [setDepartments, setUsers, users, navigation]);
 
   useEffect(() => { // mount
     emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, component);
@@ -54,7 +64,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
     return () => {
       emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
     }
-  }, [component]);
+  }, [component, route.params?.user.id]);
 
   // set roles if roles are passed from User Role
   useEffect(() => {
