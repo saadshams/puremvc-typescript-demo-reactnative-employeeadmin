@@ -12,7 +12,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
-import useUsersStore from "../../store/useUsersStore";
+import useUsersStore from "../../model/store/useUsersStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserList">;

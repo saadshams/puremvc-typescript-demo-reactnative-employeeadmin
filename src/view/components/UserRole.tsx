@@ -13,7 +13,7 @@ import { Button, CheckBox } from "@rneui/themed";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { Role } from "../../model/valueObject/Role";
-import useRolesStore from "../../store/useRolesStore";
+import useRolesStore from "../../model/store/useRolesStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserRole">;

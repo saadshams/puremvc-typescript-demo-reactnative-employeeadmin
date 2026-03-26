@@ -14,8 +14,8 @@ import { Picker } from "@react-native-picker/picker";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { User } from "../../model/valueObject/User";
 import { Department } from "../../model/valueObject/Department";
-import useUsersStore from "../../store/useUsersStore";
-import useDepartmentsStore from "../../store/useDepartmentsStore";
+import useUsersStore from "../../model/store/useUsersStore";
+import useDepartmentsStore from "../../model/store/useDepartmentsStore";
 
 interface Props {
   navigation: StackNavigationProp<ParamList, "UserForm">;
