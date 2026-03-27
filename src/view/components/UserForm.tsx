@@ -29,11 +29,13 @@ export interface IUserForm {
   goBack: (user: UserVO) => void
 }
 
-const UserForm: React.FC<Props> = ( {navigation, route} ) => {
+const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
   const [user, setUser] = useState<UserVO>(new UserVO()); // UserVO Data
   const [roles, setRoles] = useState<RoleEnum[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
+  const isEditMode = !!route.params?.user.username;
 
   const component: IUserForm = useMemo(() => ({
     USER_FETCH: "UserFormFetch",
@@ -41,7 +43,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
     USER_UPDATE: "UserFormUpdate",
     setUser: setUser,
     goBack: (u: UserVO) => {
-      navigation.navigate("UserList", {user: u})
+      navigation.navigate("UserList", { user: u })
     }
   }), [navigation, setUser]);
 
@@ -67,6 +69,7 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
   // text fields change handler
   const onChange = (field: keyof UserVO, value: string) => {
+    setErrorMessage("");
     setUser((state: UserVO) => (
       { ...state, [field]: value } as UserVO
     ));
@@ -74,8 +77,9 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
   // department value change handler
   const onValueChange = (value: number, index: number) => {
+    setErrorMessage("");
     setUser((state: UserVO) => (
-      { ...state, department: value === 0 ? DeptEnum.NONE_SELECTED : DeptEnum.combo.find(d => d.ordinal === value)} as UserVO
+      { ...state, department: value === 0 ? DeptEnum.NONE_SELECTED : DeptEnum.combo.find(d => d.ordinal === value) } as UserVO
     ));
   }
 
@@ -86,12 +90,29 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
 
   // save press handler
   const onSave = (event: any) => {
-    emitter.emit(user.username === "" ? component.USER_SAVE : component.USER_UPDATE, {user: user});
+    const validationError = UserVO.getValidationError(user);
+
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
+    emitter.emit(isEditMode ? component.USER_UPDATE : component.USER_SAVE, { user: user });
   }
 
   // cancel press handler
   const onCancel = (event: any) => {
     navigation.goBack();
+  }
+
+  const onChangePassword = (value: string) => {
+    setErrorMessage("");
+    setUser(({ ...user, password: value } as UserVO));
+  }
+
+  const onChangeConfirm = (value: string) => {
+    setErrorMessage("");
+    setUser(({ ...user, confirm: value } as UserVO));
   }
 
   return (
@@ -102,11 +123,11 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
       </View>
       <View style={styles.row}>
         <TextInput style={styles.input} placeholder="Email" value={user?.email} onChangeText={(value) => onChange("email", value)} keyboardType="email-address" />
-        <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} editable={!route.params?.user.username}/>
+        <TextInput style={styles.input} placeholder="Username" value={user?.username} onChangeText={(value) => onChange("username", value)} editable={!route.params?.user.username} />
       </View>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={(value) => setUser( ({...user, password: value } as UserVO) )} />
-        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={(value) => setUser( ({...user, confirm: value } as UserVO) )} />
+        <TextInput style={styles.input} placeholder="Password" value={user?.password} onChangeText={onChangePassword} />
+        <TextInput style={styles.input} placeholder="Confirm" value={user?.confirm} onChangeText={onChangeConfirm} />
       </View>
       <View style={styles.row}>
         <Picker style={styles.input} selectedValue={user.department?.ordinal} onValueChange={onValueChange}>
@@ -123,9 +144,12 @@ const UserForm: React.FC<Props> = ( {navigation, route} ) => {
           <Text style={styles.buttonText}>CANCEL</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.save]} onPress={onSave}>
-          <Text style={styles.buttonText}>{route.params?.user.username ? "UPDATE" : "SAVE"}</Text>
+          <Text style={styles.buttonText}>{isEditMode ? "UPDATE" : "SAVE"}</Text>
         </TouchableOpacity>
       </View>
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
     </ScrollView>
   );
 }
@@ -170,6 +194,11 @@ const styles = StyleSheet.create({
   },
   roles: {
     backgroundColor: "#9C27B0",
+  },
+  errorText: {
+    color: "#D32F2F",
+    fontSize: 14,
+    marginHorizontal: 5,
   },
 });
 
