@@ -27,8 +27,44 @@ export class UserVO {
     this.department = department;
   }
 
-  static validate(confirm: string): boolean {
-    return false;
+  static validate(user: UserVO): boolean {
+    return UserVO.getValidationError(user) === "";
+  }
+
+  static getValidationError(user: UserVO): string {
+    if (user.first.trim().length === 0) {
+      return "First name is required.";
+    }
+
+    if (user.last.trim().length === 0) {
+      return "Last name is required.";
+    }
+
+    if (user.email.trim().length === 0) {
+      return "Email is required.";
+    }
+
+    if (user.username.trim().length === 0) {
+      return "Username is required.";
+    }
+
+    if (user.password.trim().length === 0) {
+      return "Password is required.";
+    }
+
+    if (user.confirm.trim().length === 0) {
+      return "Confirm password is required.";
+    }
+
+    if (user.department === DeptEnum.NONE_SELECTED) {
+      return "Please select a department.";
+    }
+
+    if (user.password !== user.confirm) {
+      return "Password and confirm password must match.";
+    }
+
+    return "";
   }
 
 }
