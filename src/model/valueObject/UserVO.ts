@@ -1,6 +1,6 @@
 //
 //  UserVO.ts
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License

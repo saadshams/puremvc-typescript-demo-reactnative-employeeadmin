@@ -1,6 +1,6 @@
 //
 //  UserForm.tsx
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
@@ -34,7 +34,7 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
   const [user, setUser] = useState<UserVO>(new UserVO()); // UserVO Data
   const [roles, setRoles] = useState<RoleEnum[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
+  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
   const isEditMode = !!route.params?.user.username;
 
   const component: IUserForm = useMemo(() => ({

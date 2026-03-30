@@ -1,6 +1,6 @@
 //
 //  StartupCommand.ts
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
@@ -36,7 +36,7 @@ export class StartupCommand extends SimpleCommand {
     this.facade.registerProxy(userProxy);
     this.facade.registerProxy(roleProxy);
 
-    const emitter = new NativeEventEmitter(NativeModules.EmployeeAdmin);
+    const emitter = new NativeEventEmitter(NativeModules.employeeadmin);
     [
       ApplicationConstants.USER_LIST_MOUNTED, ApplicationConstants.USER_LIST_UNMOUNTED,
       ApplicationConstants.USER_FORM_MOUNTED, ApplicationConstants.USER_FORM_UNMOUNTED,

@@ -120,7 +120,7 @@ Install the following tools before starting:
     * Reinstall Cocoapods: `sudo gem install cocoapods`
 
 ## Project
-* Init Project: `npx @react-native-community/cli init EmployeeAdmin`
+* Init Project: `npx @react-native-community/cli init employeeadmin`
 * Build Android: Have an Android emulator running (quickest way to get started), or a device connected.
     * Mac: `npx react-native run-android` | `cd android && ./gradlew clean && cd ..`
     * Windows: `cd android && .\gradlew clean && cd ..`
@@ -134,7 +134,7 @@ Install the following tools before starting:
 `expo init project-name`
 
 ### Project (XCode 14.2 with Ruby version 2.7.6** - MacPro Late 2013)
-Init: `npx react-native@0.71 init EmployeeAdmin --version 0.71`
+Init: `npx react-native@0.71 init employeeadmin --version 0.71`
 
 ## Troubleshooting
 * `ENOENT` error on Windows: Create `npm` folder in `C:\Users\{username}\AppData\Roaming`

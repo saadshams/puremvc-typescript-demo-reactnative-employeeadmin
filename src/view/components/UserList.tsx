@@ -1,6 +1,6 @@
 //
 //  UserList.tsx
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
@@ -26,7 +26,7 @@ export interface IUserList {
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   const [users, setUsers] = useState<UserVO[]>([]); // UserVO Data
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
+  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
 
   const component: IUserList = useMemo(() => ({
     DELETE: "UserListDelete",

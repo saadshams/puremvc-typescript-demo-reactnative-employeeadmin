@@ -1,6 +1,6 @@
 //
 //  UserRole.tsx
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
@@ -27,7 +27,7 @@ export interface IUserRole {
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
   const [data, setData] = useState<RoleEnum[]>([]); // UserVO Data
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.EmployeeAdmin), []);
+  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
 
   const component: IUserRole = useMemo(() => ({
     USER_ROLE_FETCH: "UserRoleFetch",

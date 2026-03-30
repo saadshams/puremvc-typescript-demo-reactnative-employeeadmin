@@ -1,12 +1,12 @@
 //
 //  Application.tsx
-//  PureMVC TypeScript Demo - React Native EmployeeAdmin
+//  PureMVC TypeScript Demo - React Native employeeadmin
 //
 //  Copyright(c) 2026 Saad Shams <saad.shams@puremvc.org>
 //  Your reuse is governed by the BSD 3-Clause License
 //
 
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text, TouchableOpacity } from "react-native";
@@ -18,6 +18,8 @@ import { UserVO } from "./model/valueObject/UserVO";
 import UserList from "./view/components/UserList";
 import UserForm from "./view/components/UserForm";
 import UserRole from "./view/components/UserRole";
+import Calculator from '../NativeCalculator';
+import { NativeModules } from 'react-native';
 
 ApplicationFacade
     .getInstance(ApplicationFacade.KEY, key => new ApplicationFacade(key))
@@ -26,6 +28,15 @@ ApplicationFacade
 const Application: React.FC = () => {
 
   const Stack = createNativeStackNavigator<ParamList>();
+
+  useEffect(() => {
+    const run = async () => {
+      const res = await Calculator.add(3, 7);
+      console.log('res', res);
+    };
+
+    run().catch(console.error);
+  }, []);
 
   return (
     <NavigationContainer>
