@@ -57,15 +57,12 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
     }
   }, [component]);
 
-  // set roles if roles are passed from UserVO RoleVO
-  // useEffect(() => {
-  //   if (route.params?.user.roles) { // (race condition)
-  //     setUser((state: UserVO) => (
-  //       {...state, roles: route.params?.user.roles}
-  //     ));
-  //   }
-  //   return () => {}
-  // }, [route.params]);
+  // Update roles when returning from the UserRole screen.
+  useEffect(() => {
+    if (route.params?.roles) {
+      setRoles(route.params.roles);
+    }
+  }, [route.params?.roles]);
 
   // text fields change handler
   const onChange = (field: keyof UserVO, value: string) => {
@@ -90,7 +87,7 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
 
   // save press handler
   const onSave = (event: any) => {
-    const validationError = UserVO.getValidationError(user);
+    const validationError = UserVO.getValidationError({ ...user, roles } as UserVO);
 
     if (validationError) {
       setErrorMessage(validationError);

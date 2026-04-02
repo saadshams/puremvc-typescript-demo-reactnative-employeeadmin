@@ -7,6 +7,7 @@
 //
 
 import { DeptEnum } from "../enum/DeptEnum";
+import { RoleEnum } from "../enum/RoleEnum";
 
 export class UserVO {
   public username: string;
@@ -16,6 +17,7 @@ export class UserVO {
   public password: string;
   public confirm: string = "";
   public department: DeptEnum;
+  public roles: RoleEnum[] = [];
 
   constructor(username = "", first = "", last = "", email = "", password = "", department = DeptEnum.NONE_SELECTED) {
     this.username = username;
@@ -58,6 +60,10 @@ export class UserVO {
 
     if (user.department === DeptEnum.NONE_SELECTED) {
       return "Please select a department.";
+    }
+
+    if (!user.roles || user.roles.length === 0) {
+      return "Role is required.";
     }
 
     if (user.password !== user.confirm) {
