@@ -34,7 +34,14 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
   const [user, setUser] = useState<UserVO>(new UserVO()); // UserVO Data
   const [roles, setRoles] = useState<RoleEnum[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
+  const nativeModule = NativeModules.employeeadmin;
+  const emitter = useMemo(() => {
+    if (!nativeModule) {
+      console.log("NativeModules.employeeadmin is missing");
+      return null;
+    }
+    return new NativeEventEmitter(nativeModule);
+  }, [nativeModule]);
   const isEditMode = !!route.params?.user.username;
 
   const component: IUserForm = useMemo(() => ({
@@ -47,15 +54,19 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
     }
   }), [navigation, setUser]);
 
-  useEffect(() => { // mount
+  useEffect(() => {
+    if (!emitter) return;
+  
     emitter.emit(ApplicationConstants.USER_FORM_MOUNTED, component);
-    if (route.params?.user.username) { // fetch user - if username is passed from UserList
+  
+    if (route.params?.user.username) {
       emitter.emit(component.USER_FETCH, { id: route.params?.user.username });
     }
+  
     return () => {
       emitter.emit(ApplicationConstants.USER_FORM_UNMOUNTED);
-    }
-  }, [component]);
+    };
+  }, [component, emitter, route.params?.user.username]);
 
   // Update roles when returning from the UserRole screen.
   useEffect(() => {
@@ -88,12 +99,17 @@ const UserForm: React.FC<Props> = ({ navigation, route }) => {
   // save press handler
   const onSave = (event: any) => {
     const validationError = UserVO.getValidationError({ ...user, roles } as UserVO);
-
+  
     if (validationError) {
       setErrorMessage(validationError);
       return;
     }
-
+  
+    if (!emitter) {
+      console.log("Emitter is not available");
+      return;
+    }
+  
     emitter.emit(isEditMode ? component.USER_UPDATE : component.USER_SAVE, { user: user });
   }
 

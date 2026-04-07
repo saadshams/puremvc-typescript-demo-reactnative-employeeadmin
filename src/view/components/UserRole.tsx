@@ -27,7 +27,14 @@ export interface IUserRole {
 const UserRole: React.FC<Props> = ({ navigation, route }) => {
 
   const [data, setData] = useState<RoleEnum[]>([]); // UserVO Data
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
+  const nativeModule = NativeModules.employeeadmin;
+  const emitter = useMemo(() => {
+    if (!nativeModule) {
+      console.log("NativeModules.employeeadmin is missing");
+      return null;
+    }
+    return new NativeEventEmitter(nativeModule);
+  }, [nativeModule]);
 
   const component: IUserRole = useMemo(() => ({
     USER_ROLE_FETCH: "UserRoleFetch",
@@ -35,14 +42,18 @@ const UserRole: React.FC<Props> = ({ navigation, route }) => {
   }), [setData]);
 
   useEffect(() => {
+    if (!emitter) return;
+  
     emitter.emit(ApplicationConstants.USER_ROLE_MOUNTED, component);
-    if (route.params?.user.username)
-      emitter.emit(component.USER_ROLE_FETCH, {id: route.params?.user.username});
-
+  
+    if (route.params?.user.username) {
+      emitter.emit(component.USER_ROLE_FETCH, { id: route.params?.user.username });
+    }
+  
     return () => {
       emitter.emit(ApplicationConstants.USER_ROLE_UNMOUNTED);
-    }
-  }, [component]);
+    };
+  }, [component, emitter, route.params?.user.username]);
 
   const onChange = (role: RoleEnum) => {
     setData((state) => {
@@ -65,14 +76,14 @@ const UserRole: React.FC<Props> = ({ navigation, route }) => {
     navigation.goBack();
   }
 
-  return(
+  return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {RoleEnum.combo.map((role: RoleEnum) => (
           <View key={`role_${role.ordinal}`} style={styles.item}>
             <CheckBox title={role.value} containerStyle={styles.checkbox}
-                      checked={data.some(r => r.ordinal === role.ordinal)} onPress={() => onChange(role)}
-                      iconType="material-community" checkedIcon="checkbox-outline" uncheckedIcon={"checkbox-blank-outline"} />
+              checked={data.some(r => r.ordinal === role.ordinal)} onPress={() => onChange(role)}
+              iconType="material-community" checkedIcon="checkbox-outline" uncheckedIcon={"checkbox-blank-outline"} />
           </View>
         ))}
       </ScrollView>

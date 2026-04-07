@@ -26,7 +26,14 @@ export interface IUserList {
 const UserList: React.FC<Props> = ({ navigation, route }) => {
 
   const [users, setUsers] = useState<UserVO[]>([]); // UserVO Data
-  const emitter = useMemo(() => new NativeEventEmitter(NativeModules.employeeadmin), []);
+  const nativeModule = NativeModules.employeeadmin;
+  const emitter = useMemo(() => {
+    if (!nativeModule) {
+      console.log("NativeModules.employeeadmin is missing");
+      return null;
+    }
+    return new NativeEventEmitter(nativeModule);
+  }, [nativeModule]);
 
   const component: IUserList = useMemo(() => ({
     DELETE: "UserListDelete",
@@ -34,20 +41,23 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
   }), [setUsers]);
 
   useEffect(() => {
+    if (!emitter) return;
+  
     emitter.emit(ApplicationConstants.USER_LIST_MOUNTED, component);
+  
     return () => {
       emitter.emit(ApplicationConstants.USER_LIST_UNMOUNTED);
     };
-  }, [component]);
+  }, [component, emitter]);
 
   useEffect(() => {
     if (route.params?.user) { // updated user from the UserForm
-        setUsers((users: UserVO[]) => {
-          if (users.some(user => user.username === route.params?.user.username))  // existing, update
-            return users.map((user: UserVO) => user.username === route.params?.user.username ? route.params?.user : user)
-          else
-            return [...users, route.params?.user] // add new
-        });
+      setUsers((users: UserVO[]) => {
+        if (users.some(user => user.username === route.params?.user.username))  // existing, update
+          return users.map((user: UserVO) => user.username === route.params?.user.username ? route.params?.user : user)
+        else
+          return [...users, route.params?.user] // add new
+      });
 
       navigation.setParams({ user: undefined });
     }
@@ -61,10 +71,10 @@ const UserList: React.FC<Props> = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <FlatList data={users} keyExtractor={(user: UserVO) => `user_${user.username}`} renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => onPress(item)}>
-              <Text style={styles.item}>{item.last}, {item.first}</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={() => onPress(item)}>
+            <Text style={styles.item}>{item.last}, {item.first}</Text>
+          </TouchableOpacity>
+        )}
         />
       </View>
     </SafeAreaView>

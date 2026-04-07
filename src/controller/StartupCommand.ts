@@ -15,8 +15,8 @@ import { UserProxy } from "../model/UserProxy";
 import { RoleProxy } from "../model/RoleProxy";
 import { UserVO } from "../model/valueObject/UserVO";
 import { DeptEnum } from "../model/enum/DeptEnum";
-import {RoleVO} from "../model/valueObject/RoleVO";
-import {RoleEnum} from "../model/enum/RoleEnum";
+import { RoleVO } from "../model/valueObject/RoleVO";
+import { RoleEnum } from "../model/enum/RoleEnum";
 
 export class StartupCommand extends SimpleCommand {
 
@@ -36,7 +36,14 @@ export class StartupCommand extends SimpleCommand {
     this.facade.registerProxy(userProxy);
     this.facade.registerProxy(roleProxy);
 
-    const emitter = new NativeEventEmitter(NativeModules.employeeadmin);
+    const nativeModule = NativeModules.employeeadmin;
+
+    if (!nativeModule) {
+      console.log('NativeModules.employeeadmin is missing');
+      return;
+    }
+
+    const emitter = new NativeEventEmitter(nativeModule);
     [
       ApplicationConstants.USER_LIST_MOUNTED, ApplicationConstants.USER_LIST_UNMOUNTED,
       ApplicationConstants.USER_FORM_MOUNTED, ApplicationConstants.USER_FORM_UNMOUNTED,

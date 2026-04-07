@@ -8,62 +8,52 @@
 
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from "react-native";
 import { Mediator } from "@puremvc/puremvc-typescript-multicore-framework";
-import { UserProxy } from "../model/UserProxy";
-import { IUserForm } from "./components/UserForm";
+import { RoleProxy } from "../model/RoleProxy";
+import { IUserRole } from "./components/UserRole";
 
-export class UserFormMediator extends Mediator {
+export class UserRoleMediator extends Mediator {
+  public static NAME = "UserRoleMediator";
 
-  public static NAME = "UserFormMediator";
-
-  private emitter = new NativeEventEmitter(NativeModules.employeeadmin);
+  private emitter: NativeEventEmitter | null = null;
   private listeners: EmitterSubscription[] = [];
-  private userProxy!: UserProxy;
+  private roleProxy!: RoleProxy;
 
   constructor(component: any) {
-    super(UserFormMediator.NAME, component);
+    super(UserRoleMediator.NAME, component);
   }
 
   public async onRegister() {
-    this.userProxy = this.facade.retrieveProxy(UserProxy.NAME) as UserProxy;
-    this.listeners.push(this.emitter.addListener(this.component.USER_FETCH, event => this.onFetch(event)));
-    this.listeners.push(this.emitter.addListener(this.component.USER_SAVE, event => this.onSave(event)));
-    this.listeners.push(this.emitter.addListener(this.component.USER_UPDATE, event => this.onUpdate(event)));
+    this.roleProxy = this.facade.retrieveProxy(RoleProxy.NAME) as RoleProxy;
+
+    const nativeModule = NativeModules.employeeadmin;
+
+    if (!nativeModule) {
+      console.log("NativeModules.employeeadmin is missing");
+      return;
+    }
+
+    this.emitter = new NativeEventEmitter(nativeModule);
+
+    this.listeners.push(
+      this.emitter.addListener(this.component.USER_ROLE_FETCH, event => this.onSelect(event))
+    );
   }
 
   public onRemove() {
     this.listeners.forEach(listener => listener.remove());
+    this.listeners = [];
   }
 
-  private async onFetch(event: any) {
+  private async onSelect(event: any) {
     try {
-      const user = this.userProxy.findUserByUsername(event.id);
-      if (user)
-        this.component.setUser(user);
+      const roles = this.roleProxy.findRolesByUsername(event.id);
+      if (roles != null) this.component.setData(roles);
     } catch (error) {
       console.log(error);
     }
   }
 
-  private async onSave(event: any) {
-    try {
-      this.userProxy.save(event.user);
-      this.component.goBack(event.user);
-    } catch (error) {
-      console.log(error);
-    }
+  public get component(): IUserRole {
+    return this.viewComponent;
   }
-
-  private async onUpdate(event: any) {
-    try {
-      this.userProxy.update(event.user);
-      this.component.goBack(event.user);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  public get component() : IUserForm {
-    return this.viewComponent
-  }
-
 }

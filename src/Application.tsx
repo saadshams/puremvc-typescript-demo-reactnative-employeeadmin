@@ -19,7 +19,6 @@ import UserList from "./view/components/UserList";
 import UserForm from "./view/components/UserForm";
 import UserRole from "./view/components/UserRole";
 import Calculator from '../NativeCalculator';
-import { NativeModules } from 'react-native';
 
 ApplicationFacade
     .getInstance(ApplicationFacade.KEY, key => new ApplicationFacade(key))
