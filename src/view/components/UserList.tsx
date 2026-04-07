@@ -7,9 +7,10 @@
 //
 
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, NativeEventEmitter, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, NativeEventEmitter, NativeModules, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ApplicationConstants, ParamList } from "../../ApplicationConstants";
 import { UserVO } from "../../model/valueObject/UserVO";
 
