@@ -22,18 +22,17 @@ export class UserProxy extends Proxy {
   }
 
   public findUserByUsername(username: string): UserVO | undefined {
-    const found = this.data.find((currentUser: UserVO) => currentUser.username === username);
-    return found ? ({ ...found } as UserVO) : undefined;
+    return this.data.find((u: UserVO) => u.username === username);
   }
 
   public save(user: UserVO) {
-    this.data.push({ ...user } as UserVO);
+    this.data.push(user);
   }
 
   public update(user: UserVO) {
-    const index = this.data.findIndex((currentUser: UserVO) => currentUser.username === user.username);
+    const index = this.data.findIndex((u: UserVO) => u.username === user.username);
     if (index !== -1)
-      this.data[index] = { ...user } as UserVO;
+      this.data[index] = user;
   }
 
 }
